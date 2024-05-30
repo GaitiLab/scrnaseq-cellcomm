@@ -2,7 +2,7 @@ Package: scrnaseq.cellcomm
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R:
-    person("Joan", "Kant", "Joan.Kant@uhn.ca", role = c("aut", "cre"),
+    person("Joan", "Kant", email = "Joan.Kant@uhn.ca", role = c("cre"),
            comment = c(ORCID = "0009-0007-1837-5854"))
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
