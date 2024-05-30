@@ -107,3 +107,4 @@ tests
 data
 *.csv
 *.rds
+docs
