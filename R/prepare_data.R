@@ -10,9 +10,6 @@ prepare_data <- function(input_file, annot, output_dir = ".", is_confident = FAL
     if (!(file.exists(input_file) && endsWith(input_file, ".rds"))) {
         stop("File does not exists or is not an RDS object")
     }
-    if (!file.exists(output_dir)) {
-        stop("Output directory does not exist")
-    }
     if (min_cells < 5) {
         stop("Min cells has to be >= 5...")
     }
@@ -67,9 +64,14 @@ prepare_data <- function(input_file, annot, output_dir = ".", is_confident = FAL
             glue::glue("{output_seurat}/{output_name}.rds")
         )
         message("Convert to mtx format (for Cell2Cell) and save...")
+        mtx_output_dir <- glue::glue("{output_mtx}/{output_name}")
+        if (file.exists(mtx_output_dir)) {
+            file.remove(mtx_output_dir)
+        }
+
         mat <- seurat_obj[["RNA"]]@data
         DropletUtils::write10xCounts(
-            glue::glue("{output_mtx}/{output_name}"),
+            mtx_output_dir,
             mat
         )
     }
