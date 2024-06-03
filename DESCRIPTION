@@ -13,7 +13,7 @@ RoxygenNote: 7.3.1
 Config/testthat/edition: 3
 Imports:
     GaitiLabUtils,
-    Seurat (< 5.0.0), 
+    Seurat, 
     dplyr,
     RobustRankAggreg,
     liana, 
@@ -26,7 +26,10 @@ Imports:
     glue, 
     future, 
     reshape2, 
-    pbapply
+    pbapply, 
+    tidyverse, 
+    survcomp, 
+    xlsx
 Suggests:
     styler,
     lintr,

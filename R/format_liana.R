@@ -3,7 +3,7 @@
 #' @param output_dir output directory for saving output (default = '.')
 #' @param sample_id sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'LIANA__{sample_id}.rds')
 #' @export
-#' @importFrom dplyr %>% 
+#' @importFrom dplyr %>%
 format_liana <- function(input_interactions, output_dir = ".", sample_id = NULL) {
     #  Sanity checks
     if (!(file.exists(input_interactions) && endsWith(input_interactions, ".rds"))) {
