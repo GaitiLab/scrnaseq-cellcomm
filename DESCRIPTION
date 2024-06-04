@@ -40,7 +40,7 @@ Suggests:
     httpgd,
     rlang, 
     testthat (>= 3.0.0)
-biocViews: ComplexHeatmap, survcomp
+biocViews: Software
 Remotes:
     immunogenomics/presto,
     jinworks/CellChat,
