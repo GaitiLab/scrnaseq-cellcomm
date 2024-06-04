@@ -98,7 +98,7 @@ split_seurat_into_samples <- function (input_file, output_dir = ".", sample_var 
 #' @examples dontrun{seurat_obj <- filtering(seurat_obj, "custom_annot", 300, genes_oi)}
 #' @export
 filtering <- function(seurat_obj, annot, min_cells) {
-    cells_annotated <- seurat_obj[[annot]]
+    cells_annotated <- seurat_obj@meta.data[[annot]]
     counts_per_label <- table(cells_annotated)
     labels_to_keep <- names(counts_per_label)[counts_per_label >= min_cells]
     cells_to_keep <- rownames(cells_annotated)[cells_annotated[[annot]] %in% labels_to_keep]

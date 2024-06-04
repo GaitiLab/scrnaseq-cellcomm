@@ -31,9 +31,6 @@ prepare_data <- function(
     GaitiLabUtils::create_dir(output_seurat)
     GaitiLabUtils::create_dir(output_mtx)
 
-    # ---- Constants ----
-    message("Loading Seurat object...")
-    seurat_obj <- readRDS(input_file)
 
     # Only relevant for internal project
     if (is_confident) {
