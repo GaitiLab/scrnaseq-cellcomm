@@ -2,12 +2,19 @@
 #' @description Combine p-values/scores by condition
 #' @param input_file Path to file with interaction results for all samples (401_combine_samples/401_samples_interactions_agg_rank.rds)
 #' @param output_dir output directory for saving output (default = '.')
+#' @param condition_var Variabile containing the 'condition' (group/category) of the samples (default = "Condition_dummy")
 #' @export
 #' @importFrom dplyr %>%
-aggregate_samples <- function(input_file, output_dir = ".") {
+aggregate_samples <- function(input_file, condition_var = "Condition_dummy", output_dir = ".") {
     message("Load interactions and combine p-values and scores...")
     obj <- readRDS(input_file) %>%
-        dplyr::ungroup() %>%
+        dplyr::ungroup()
+
+    if (condition_var == "Condition_dummy") {
+        message("No condition present, use 'Patient' instead")
+        condition_var <- "Patient"
+    }
+    obj <- obj %>%
         dplyr::mutate(
             LIANA_score = ifelse(is.na(LIANA_score), 0, LIANA_score),
             CellPhoneDB_score = ifelse(is.na(CellPhoneDB_score), 0, CellPhoneDB_score),
@@ -27,7 +34,7 @@ aggregate_samples <- function(input_file, output_dir = ".") {
             source_target,
             complex_interaction
         ) %>%
-        # Combine p-values and interaction scores (CellChat, LIANA, CellphoneDB) across samples
+        # Combine p-values and interaction scores (CellChat, LIANA, CellphoneDB) across condition or patient (if patient = sample, then across samples)
         dplyr::mutate(
             pval = survcomp::combine.test(pval),
             LIANA_score = mean(LIANA_score),

@@ -13,16 +13,16 @@ rra_interactions <- function(
     sample_id = NULL, output_dir = ".") {
     #  Sanity checks
     if (!(file.exists(cellchat_obj) && endsWith(cellchat_obj, ".rds"))) {
-        stop("'cellchat_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{cellchat_obj}' does not exists or is not an RDS object"))
     }
     if (!(file.exists(liana_obj) && endsWith(liana_obj, ".rds"))) {
-        stop("'liana_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{liana_obj}' does not exists or is not an RDS object"))
     }
     if (!(file.exists(cell2cell_obj) && endsWith(cell2cell_obj, ".rds"))) {
-        stop("'cell2cell_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{cell2cell_obj}' does not exists or is not an RDS object"))
     }
     if (!(file.exists(cpdb_obj) && endsWith(cpdb_obj, ".rds"))) {
-        stop("'cpdb_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{cpdb_obj}' does not exists or is not an RDS object"))
     }
     if (!file.exists(output_dir)) {
         stop("Output directory does not exist")
@@ -74,7 +74,7 @@ rra_interactions <- function(
         dplyr::arrange(Sample, source_target, dplyr::desc(score), .by_group = TRUE)
 
     cytotalk <- obj_liana %>%
-        dplyr::select(source_target, complex_interaction, Sample, run_id, cytotalk.crosstalk_score) %>%
+        dplyr::select(source_target, complex_interaction, Sample, cytotalk.crosstalk_score) %>%
         dplyr::mutate(method = "Cytotalk (LIANA)") %>%
         dplyr::rename(score = cytotalk.crosstalk_score) %>%
         dplyr::group_by(Sample, source_target, ) %>%

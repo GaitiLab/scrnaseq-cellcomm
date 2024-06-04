@@ -5,10 +5,12 @@
 #' @param means path to 'statistical_analysis_means' txt file
 #' @param output_dir output directory for saving output (default = '.')
 #' @param sample_id sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'cpdb__{sample_id}.csv')
+#' @param ref_db Path to interactions database (default = "data/interactions_db/ref_db.rds")
 #' @export
 #' @importFrom dplyr %>%
 format_cpdb <- function(
     interaction_scores, pval, sign_means, means,
+    ref_db = "data/interactions_db/ref_db.rds",
     output_dir = ".",
     sample_id = NULL) {
     #  Sanity checks
@@ -25,6 +27,11 @@ format_cpdb <- function(
     if (!(file.exists(means) && endsWith(means, ".txt") && stringr::str_detect(means, "statistical_analysis_means"))) {
         stop("'statistical_analysis_means' file ('means') does not exists or is not a txt file")
     }
+    # TODO in future release remove, when switching to new database
+    if (!file.exists(ref_db) && endsWith(input_interactions, ".rds")) {
+        stop(glue::glue("{ref_db} path does not exist"))
+    }
+
     if (!file.exists(output_dir)) {
         stop("Output directory does not exist")
     }
@@ -35,6 +42,14 @@ format_cpdb <- function(
         sample_id <- split_sample_id[1]
     }
     message(glue::glue("Formatting sample={sample_id}..."))
+
+    message("Load database...")
+    # TODO in future release remove, when switching to new database
+    ref_db <- readRDS(ref_db) %>%
+        dplyr::select(
+            simple_interaction,
+            complex_interaction, interaction
+        )
 
     message("Load CellPhoneDB output...")
     pval <- read.table(pval, sep = "\t", header = TRUE, check.names = FALSE)
@@ -77,6 +92,7 @@ format_cpdb <- function(
         dplyr::left_join(interaction_scores,
             by = c("interacting_pair", "source_target")
         ) %>%
+        dplyr::left_join(ref_db, by = c("interacting_pair" = "interaction")) %>%
         dplyr::mutate(method = "CellPhoneDBv5", Sample = sample_id) %>%
         dplyr::rename(CellPhoneDB_score = interaction_score)
 

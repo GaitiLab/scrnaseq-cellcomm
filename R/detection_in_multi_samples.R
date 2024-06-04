@@ -1,13 +1,12 @@
 #' @title Filter by detection in multiple samples
 #' @param input_file Path to '401_samples_interactions_mvoted.rds' file
-#' @param annot variable that contains the cell type labels (default = '')
 #' @param min_patients Minimum number of patients for an interaction to be kept (default = 2)
 #' @param condition_var Variabile containing the 'condition' (group/category) of the samples (default = "Condition_dummy")
 #' @param output_dir output directory for saving output (default = '.')
 #' @export
 #' @importFrom dplyr %>%
 filter_by_detection_in_multi_samples <- function(
-    input_file, annot = "",
+    input_file,
     min_patients = 2,
     condition_var = "Condition_dummy",
     output_dir = ".") {
@@ -19,10 +18,6 @@ filter_by_detection_in_multi_samples <- function(
     message("Loading input file...")
     input_file <- readRDS(input_file)
 
-    if (sum(stringr::str_detect(colnames(input_file), annot)) == 0) {
-        stop(glue::glue("'{annot}' is not a column in the input_file"))
-    }
-
     if (sum(stringr::str_detect(colnames(input_file), "Patient")) == 0) {
         message("Patient column missing, assuming Patient = Sample...")
         input_file <- input_file %>%
@@ -31,6 +26,7 @@ filter_by_detection_in_multi_samples <- function(
 
     # ---- Lenient voting ---- #
     # Check detection of the same interaction in the same patient across samples for the same region
+    message("Voting mode: 'lenient' (interaction needs to be detected in LIANA + 2 other tools)...")
     lenient_voting <- input_file %>%
         filter(lenient_voting) %>%
         dplyr::select(dplyr::all_of(cols_oi)) %>%
@@ -60,6 +56,8 @@ filter_by_detection_in_multi_samples <- function(
     message(glue::glue("After filtering: {n_after}"))
 
     # ---- Stringent voting ---- #
+    message("Voting mode: 'stringent' (interaction needs to be detected in all tools)...")
+
     stringent_voting <- input_file %>%
         filter(stringent_voting) %>%
         dplyr::select(dplyr::all_of(cols_oi)) %>%

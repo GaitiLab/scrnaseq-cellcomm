@@ -65,10 +65,11 @@ combine_samples <- function(input_dir, metadata, patient_var, condition_var = "C
     all_mvoted <- all_mvoted %>%
         # All post-processed interaction results have the same column names, e.g. "Sample"
         dplyr::left_join(metadata, by = c("Sample" = sample_var)) %>%
-        dplyr::ungroup() %>%
-        dplyr::mutate(
-            Patient = ifelse(sample_var == patient_var, Sample, patient_var)
-        )
+        dplyr::ungroup()
+
+    if (sample_var == patient_var) {
+        all_mvoted <- all_mvoted %>% dplyr::mutate(Patient = Sample)
+    }
 
     all_sign_interactions <- all_sign_interactions %>%
         # All post-processed interaction results have the same column names, e.g. "Sample"

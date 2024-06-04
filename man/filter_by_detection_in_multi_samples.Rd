@@ -6,7 +6,6 @@
 \usage{
 filter_by_detection_in_multi_samples(
   input_file,
-  annot = "",
   min_patients = 2,
   condition_var = "Condition_dummy",
   output_dir = "."
@@ -14,8 +13,6 @@ filter_by_detection_in_multi_samples(
 }
 \arguments{
 \item{input_file}{Path to '401_samples_interactions_mvoted.rds' file}
-
-\item{annot}{variable that contains the cell type labels (default = '')}
 
 \item{min_patients}{Minimum number of patients for an interaction to be kept (default = 2)}
 

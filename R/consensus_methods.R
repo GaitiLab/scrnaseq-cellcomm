@@ -14,16 +14,16 @@ take_consensus <- function(
     sample_id = NULL, output_dir = ".", alpha = 0.05) {
     #  Sanity checks
     if (!(file.exists(cellchat_obj) && endsWith(cellchat_obj, ".rds"))) {
-        stop("'cellchat_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{cellchat_obj}' does not exists or is not an RDS object"))
     }
     if (!(file.exists(liana_obj) && endsWith(liana_obj, ".rds"))) {
-        stop("'liana_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{liana_obj}' does not exists or is not an RDS object"))
     }
     if (!(file.exists(cell2cell_obj) && endsWith(cell2cell_obj, ".rds"))) {
-        stop("'cell2cell_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{cell2cell_obj}' does not exists or is not an RDS object"))
     }
     if (!(file.exists(cpdb_obj) && endsWith(cpdb_obj, ".rds"))) {
-        stop("'cpdb_obj' does not exists or is not an RDS object")
+        stop(glue::glue("'{cpdb_obj}' does not exists or is not an RDS object"))
     }
     if (!file.exists(output_dir)) {
         stop("Output directory does not exist")

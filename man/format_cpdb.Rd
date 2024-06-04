@@ -9,6 +9,7 @@ format_cpdb(
   pval,
   sign_means,
   means,
+  ref_db = "data/interactions_db/ref_db.rds",
   output_dir = ".",
   sample_id = NULL
 )
@@ -21,6 +22,8 @@ format_cpdb(
 \item{sign_means}{path to 'statistical_analysis_significant_means' txt file}
 
 \item{means}{path to 'statistical_analysis_means' txt file}
+
+\item{ref_db}{Path to interactions database (default = "data/interactions_db/ref_db.rds")}
 
 \item{output_dir}{output directory for saving output (default = '.')}
 

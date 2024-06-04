@@ -11,6 +11,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3
+Depends: 
+    R (>= 3.5.0)
 Imports:
     GaitiLabUtils,
     Seurat, 
@@ -38,6 +40,7 @@ Suggests:
     httpgd,
     rlang, 
     testthat (>= 3.0.0)
+biocViews: ComplexHeatmap, survcomp
 Remotes:
     immunogenomics/presto,
     jinworks/CellChat,
