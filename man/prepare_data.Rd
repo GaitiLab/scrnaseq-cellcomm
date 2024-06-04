@@ -7,6 +7,7 @@
 prepare_data(
   input_file,
   annot,
+  sample_id = NULL,
   output_dir = ".",
   is_confident = FALSE,
   min_cells = 5
@@ -16,6 +17,8 @@ prepare_data(
 \item{input_file}{path to seurat object (rds file)}
 
 \item{annot}{variable in metadata containing the cell annotation}
+
+\item{sample_id}{sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'cpdb__{sample_id}.csv')}
 
 \item{output_dir}{output directory for saving output (default = '.')}
 

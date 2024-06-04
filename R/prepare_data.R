@@ -4,8 +4,12 @@
 #' @param output_dir output directory for saving output (default = '.')
 #' @param annot variable in metadata containing the cell annotation
 #' @param min_cells Minimum number of cells required in each cell group for cell-cell communication (default = 5)
+#' @param sample_id sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'cpdb__{sample_id}.csv')
 #' @export
-prepare_data <- function(input_file, annot, output_dir = ".", is_confident = FALSE, min_cells = 5) {
+prepare_data <- function(
+    input_file, annot,
+    sample_id = NULL, output_dir = ".",
+    is_confident = FALSE, min_cells = 5) {
     #  Sanity checks
     if (!(file.exists(input_file) && endsWith(input_file, ".rds"))) {
         stop("File does not exists or is not an RDS object")
@@ -48,10 +52,14 @@ prepare_data <- function(input_file, annot, output_dir = ".", is_confident = FAL
     # Determine number of cell types present with at least min_cells
     n_cell_types <- length(unique(seurat_obj@meta.data[[annot]]))
 
-    output_name <- stringr::str_split(
-        GaitiLabUtils::get_name(input_file), "__",
-        simplify = TRUE
-    )
+    if (is.null(sample_id)) {
+        output_name <- stringr::str_split(
+            GaitiLabUtils::get_name(input_file), "__",
+            simplify = TRUE
+        )
+    } else {
+        output_name <- sample_id
+    }
     if (n_cell_types < 2) {
         message("Not enough cell types present (at least 2 necessary)...")
     } else {
