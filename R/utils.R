@@ -74,15 +74,15 @@ split_seurat_into_samples <- function (input_file, output_dir = ".", sample_var 
     obj_list <- Seurat::SplitObject(seurat_obj, split.by = sample_var)
     obj_ids <- names(obj_list)
 
-    message(glue("Split object by {sample_var}..."))
+    message(glue::glue("Split object by {sample_var}..."))
     for (obj_id in obj_ids) {
-        message(glue("Sample: {obj_id}..."))
+        message(glue::glue("Sample: {obj_id}..."))
         obj <- obj_list[[obj_id]]
 
-        message(glue("Saving {sample_var}: {obj_id}"))
+        message(glue::glue("Saving {sample_var}: {obj_id}"))
             saveRDS(
                 obj,
-                glue("{output_dir}/{obj_id}.rds")
+                glue::glue("{output_dir}/{obj_id}.rds")
             )
     }
 
@@ -92,13 +92,17 @@ split_seurat_into_samples <- function (input_file, output_dir = ".", sample_var 
 #' @description  1. Only keep genes that are part of the interactions db, 2. Only keep cell types with at least N cells (user-defined)
 #' @param seurat_obj Seurat object
 #' @param annot Annotation to use for filtering
-#' @param min_cells Minimum number of cells per annotation
+#' @param min_cells Minimum number of cells per annotation (default = 5)
 #' @param genes_oi list of genes of interest from database
 #' @return seurat_obj Filtered seurat object
 #' @examples dontrun{seurat_obj <- filtering(seurat_obj, "custom_annot", 300, genes_oi)}
 #' @export
-filtering <- function(seurat_obj, annot, min_cells) {
-    cells_annotated <- seurat_obj@meta.data[[annot]]
+filtering <- function(seurat_obj, annot, min_cells = 5) {
+    if(min_cells < 5) {
+        stop("Min_cells should be >= 5")
+    }
+    # Get annotations of cells (rownames = cell_id)
+    cells_annotated <- seurat_obj@meta.data[annot]
     counts_per_label <- table(cells_annotated)
     labels_to_keep <- names(counts_per_label)[counts_per_label >= min_cells]
     cells_to_keep <- rownames(cells_annotated)[cells_annotated[[annot]] %in% labels_to_keep]

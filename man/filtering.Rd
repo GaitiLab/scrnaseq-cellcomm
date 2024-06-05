@@ -4,14 +4,14 @@
 \alias{filtering}
 \title{Filtering the Seurat object to reduce size of object}
 \usage{
-filtering(seurat_obj, annot, min_cells)
+filtering(seurat_obj, annot, min_cells = 5)
 }
 \arguments{
 \item{seurat_obj}{Seurat object}
 
 \item{annot}{Annotation to use for filtering}
 
-\item{min_cells}{Minimum number of cells per annotation}
+\item{min_cells}{Minimum number of cells per annotation (default = 5)}
 
 \item{genes_oi}{list of genes of interest from database}
 }
