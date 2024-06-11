@@ -21,9 +21,9 @@ get_metadata <- function (input_file, output_dir = ".") {
     seurat_obj <- readRDS(input_file)
     out_filename <- GaitiLabUtils::get_name(input_file)
     message('Save metadata as rds file...')
-    saveRDS(seurat_obj@meta.data, glue("{output_dir}/{out_filename}__metadata.rds"))
+    saveRDS(seurat_obj@meta.data, glue::glue("{output_dir}/{out_filename}__metadata.rds"))
     message("Save metadata as csv file...")
-    write.csv(seurat_obj@meta.data, glue("{output_dir}/{out_filename}__metadata.csv"))
+    write.csv(seurat_obj@meta.data, glue::glue("{output_dir}/{out_filename}__metadata.csv"))
     message("Finished...")
 }
 
@@ -48,7 +48,7 @@ reduce_seurat_obj <- function (input_file, output_dir = ".") {
         if (assay_name == "RNA") {
             next
         } else {
-            message(glue("Removing assay: {assay_name}..."))
+            message(glue::glue("Removing assay: {assay_name}..."))
             try(seurat_obj[[assay_name]] <- NULL, FALSE)
         }
     }
@@ -57,7 +57,7 @@ reduce_seurat_obj <- function (input_file, output_dir = ".") {
         stringr::str_split(GaitiLabUtils::get_name(input_file), "__", simplify = TRUE)[1])
 
     message("Saving reduced Seurat object...")
-    saveRDS(seurat_obj, glue("{output_dir}/{out_filename}_reduced_size.rds"))
+    saveRDS(seurat_obj, glue::glue("{output_dir}/{out_filename}_reduced_size.rds"))
     message("Finished...")
 }
 

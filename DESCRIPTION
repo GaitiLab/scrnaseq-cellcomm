@@ -46,6 +46,5 @@ Remotes:
     immunogenomics/presto,
     jinworks/CellChat,
     saezlab/liana,
-    saezlab/OmnipathR,
     GaitiLab/GaitiLabUtils
 URL: https://gaitilab.github.io/scrnaseq-cellcomm/
