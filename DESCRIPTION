@@ -12,7 +12,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3
 Depends: 
-    R (>= 3.5.0), 
+    R (>= 4.0), 
     Signac
 Imports:
     GaitiLabUtils,
@@ -32,7 +32,9 @@ Imports:
     pbapply, 
     tidyverse, 
     survcomp, 
-    xlsx
+    xlsx,
+    MASS,
+    Matrix
 Suggests:
     styler,
     lintr,
@@ -41,10 +43,13 @@ Suggests:
     httpgd,
     rlang, 
     testthat (>= 3.0.0)
-biocViews: Software
+biocViews: scater, scran, SingleCellExperiment, ComplexHeatmap, ExperimentHub, Software
 Remotes:
     immunogenomics/presto,
     jinworks/CellChat,
     saezlab/liana,
-    GaitiLab/GaitiLabUtils
+    GaitiLab/GaitiLabUtils,
+    saezlab/OmnipathR, 
+    cran/Matrix@1.6-5,
+    cran/MASS@7.3-60
 URL: https://gaitilab.github.io/scrnaseq-cellcomm/
