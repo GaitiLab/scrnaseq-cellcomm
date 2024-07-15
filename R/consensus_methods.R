@@ -130,10 +130,16 @@ take_consensus <- function(
         dplyr::group_by(Sample, source_target, complex_interaction) %>%
         dplyr::count() %>%
         dplyr::rename(n_methods = n) %>%
-        dplyr::left_join(obj_liana %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi), LIANA_score) %>% dplyr::mutate(in_liana = 1)) %>%
-        dplyr::left_join(obj_cellchat %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi), CellChat_score) %>% dplyr::mutate(in_cellchat = 1)) %>%
+        # Adding scores regardless of pval
+        dplyr::left_join(obj_liana %>% dplyr::select(dplyr::all_of(cols_oi), LIANA_score)) %>%
+        dplyr::left_join(obj_cellchat %>% dplyr::select(dplyr::all_of(cols_oi), CellChat_score)) %>%
+        dplyr::left_join(obj_cell2cell %>% dplyr::select(dplyr::all_of(cols_oi))) %>%
+        dplyr::left_join(obj_cpdb %>% dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score)) %>%
+        # Adding binary info on whether interaction was found significant in individual methods
+        dplyr::left_join(obj_liana %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_liana = 1)) %>%
+        dplyr::left_join(obj_cellchat %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_cellchat = 1)) %>%
         dplyr::left_join(obj_cell2cell %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_cell2cell = 1)) %>%
-        dplyr::left_join(obj_cpdb %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score) %>% dplyr::mutate(in_cpdb = 1))
+        dplyr::left_join(obj_cpdb %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_cpdb = 1))
     all_votes[is.na(all_votes)] <- 0
 
     message("Take consensus...")
