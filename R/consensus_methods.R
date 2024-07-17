@@ -36,7 +36,7 @@ take_consensus <- function(
     # Pre-filtering on p-value, only impacts when downsampling is done (pval == NA, if interaction not detected in each downsampling run)
     obj_cellchat <- readRDS(cellchat_obj)
     obj_liana <- readRDS(liana_obj)
-    obj_cell2cell <- readRDS(cellchat_obj)
+    obj_cell2cell <- readRDS(cell2cell_obj)
     obj_cpdb <- readRDS(cpdb_obj)
     common_cols <- c("source_target", "complex_interaction", "pval", "method", "Sample")
 
@@ -96,6 +96,13 @@ take_consensus <- function(
     # 5 Macrophage__Macrophage        ADAM9__ITGB1 CellPhoneDBv5 6514_enhancing_border
     # 6 Macrophage__Macrophage       LGALS1__ITGB1 CellPhoneDBv5 6514_enhancing_border
 
+
+    message(glue::glue("Number of interactions in CellChat BEFORE filtering: {nrow(obj_cellchat)}"))
+    message(glue::glue("Number of interactions in LIANA BEFORE filtering: {nrow(obj_liana)}"))
+    message(glue::glue("Number of interactions in Cell2Cell BEFORE filtering: {nrow(obj_cell2cell)}"))
+    message(glue::glue("Number of interactions in CPDB BEFORE filtering: {nrow(obj_cpdb)}"))
+
+
     message(glue::glue("Number of interactions in CellChat AFTER filtering: {nrow(obj_cellchat_filtered)}"))
     message(glue::glue("Number of interactions in LIANA AFTER filtering: {nrow(obj_liana_filtered)}"))
     message(glue::glue("Number of interactions in Cell2Cell AFTER filtering: {nrow(obj_cell2cell_filtered)}"))
@@ -128,30 +135,30 @@ take_consensus <- function(
     cols_oi <- c("Sample", "source_target", "complex_interaction")
     all_votes <- interactions_signif %>%
         dplyr::group_by(Sample, source_target, complex_interaction) %>%
-        dplyr::count() %>%
-        dplyr::rename(n_methods = n) %>%
-        # Adding scores regardless of pval
+        dplyr::reframe(n_methods = n(), detected_signif_in_methods = paste0(method, collapse = ", ")) %>%
+        dplyr::ungroup() %>%
+        # Adding scores regardless of pval (left-join, so only added when already in interactions_signif)
         dplyr::left_join(obj_liana %>% dplyr::select(dplyr::all_of(cols_oi), LIANA_score)) %>%
         dplyr::left_join(obj_cellchat %>% dplyr::select(dplyr::all_of(cols_oi), CellChat_score)) %>%
         dplyr::left_join(obj_cell2cell %>% dplyr::select(dplyr::all_of(cols_oi))) %>%
-        dplyr::left_join(obj_cpdb %>% dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score)) %>%
-        # Adding binary info on whether interaction was found significant in individual methods
-        dplyr::left_join(obj_liana %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_liana = 1)) %>%
-        dplyr::left_join(obj_cellchat %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_cellchat = 1)) %>%
-        dplyr::left_join(obj_cell2cell %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_cell2cell = 1)) %>%
-        dplyr::left_join(obj_cpdb %>% filter(pval < alpha) %>% dplyr::select(dplyr::all_of(cols_oi)) %>% dplyr::mutate(in_cpdb = 1))
-    all_votes[is.na(all_votes)] <- 0
+        dplyr::left_join(obj_cpdb %>% dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score))
+
+    # TODO comment out to see how many values are missing
+    # all_votes[is.na(all_votes)] <- 0
 
     message("Take consensus...")
     # TODO we could change this if necessary
     interactions_mvoted <- all_votes %>%
         dplyr::group_by(Sample, source_target, complex_interaction) %>%
         dplyr::mutate(
-            lenient_voting = (n_methods >= 3) & (in_liana == 1),
+            lenient_voting = (n_methods >= 3) & stringr::str_detect(detected_signif_in_methods, "LIANA"),
             stringent_voting = (n_methods == 4)
-        )
+        ) %>%
+        dplyr::ungroup() %>%
+        data.frame()
 
-    message(glue::glue("Number of interactions after consensus: {nrow(interactions_mvoted)}"))
+    message(glue::glue("Number of interactions after consensus LENIENT: {nrow(interactions_mvoted %>% filter(lenient_voting))}"))
+    message(glue::glue("Number of interactions after consensus STRINGENT: {nrow(interactions_mvoted %>% filter(stringent_voting))}"))
 
     message("Save output...")
     saveRDS(
