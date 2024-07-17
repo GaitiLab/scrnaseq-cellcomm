@@ -35,7 +35,7 @@ rra_interactions <- function(
     # Pre-filtering on p-value, only impacts when downsampling is done (pval == NA, if interaction not detected in each downsampling run)
     obj_cellchat <- readRDS(cellchat_obj)
     obj_liana <- readRDS(liana_obj)
-    obj_cell2cell <- readRDS(cellchat_obj)
+    obj_cell2cell <- readRDS(cell2cell_obj)
     obj_cpdb <- readRDS(cpdb_obj)
 
     message(glue::glue("Number of interactions in CellChat BEFORE filtering: {nrow(obj_cellchat)}"))
