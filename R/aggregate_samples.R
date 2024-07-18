@@ -22,6 +22,7 @@ aggregate_samples <- function(input_file, condition_var = "Condition_dummy", out
             LIANA_score,
             CellPhoneDB_score,
             CellChat_score,
+            Cell2Cell_score,
             source_target
         ) %>%
         dplyr::group_by(
