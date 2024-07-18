@@ -100,7 +100,7 @@ take_consensus <- function(
         # Adding scores regardless of pval (left-join, so only added when already in interactions_signif)
         dplyr::left_join(obj_liana %>% dplyr::select(dplyr::all_of(cols_oi), LIANA_score)) %>%
         dplyr::left_join(obj_cellchat %>% dplyr::select(dplyr::all_of(cols_oi), CellChat_score)) %>%
-        dplyr::left_join(obj_cell2cell %>% dplyr::select(dplyr::all_of(cols_oi)), Cell2Cell_score) %>%
+        dplyr::left_join(obj_cell2cell %>% dplyr::select(dplyr::all_of(cols_oi), Cell2Cell_score)) %>%
         dplyr::left_join(obj_cpdb %>% dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score))
 
     message("Take consensus...")
