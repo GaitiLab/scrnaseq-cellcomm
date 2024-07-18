@@ -43,7 +43,8 @@
 <span>  <span class="va">cell2cell_obj</span>,</span>
 <span>  <span class="va">cpdb_obj</span>,</span>
 <span>  sample_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"."</span></span>
+<span>  output_dir <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  n_perm <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -73,6 +74,10 @@
 
 <dt id="arg-output-dir">output_dir<a class="anchor" aria-label="anchor" href="#arg-output-dir"></a></dt>
 <dd><p>output directory for saving output (default = '.')</p></dd>
+
+
+<dt id="arg-n-perm">n_perm<a class="anchor" aria-label="anchor" href="#arg-n-perm"></a></dt>
+<dd><p>number of permutations to create pval_dummy variable for computing -log10(pval_dummy) * score, only applicable to CellChat, Cell2Cell and CellPhoneDB</p></dd>
 
 </dl></div>
 
