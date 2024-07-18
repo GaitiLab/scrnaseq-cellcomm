@@ -28,12 +28,9 @@ filter_agg_res <- function(
     }
 
     message("Combine...")
-    combi <- merge(interactions_continuous, interactions_binarized,
-        by = c(condition_var, "complex_interaction", "source_target"),
-        all = TRUE
-    ) %>%
-        dplyr::distinct() %>%
-        filter(!is.na(lenient_condition))
+    combi <- interactions_binarized %>%
+        dplyr::left_join(interactions_continuous, by = c(condition_var, "complex_interaction", "source_target"))
+    message(glue::glue("Number of rows: {nrow(combi)}"))
 
     message("Save results...")
     saveRDS(combi, glue::glue("{output_dir}/402c_filtering_aggregated_res.rds"))
