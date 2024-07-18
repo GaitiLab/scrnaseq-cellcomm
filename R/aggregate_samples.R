@@ -31,13 +31,14 @@ aggregate_samples <- function(input_file, condition_var = "Condition_dummy", out
             complex_interaction
         ) %>%
         # Combine p-values and interaction scores (CellChat, LIANA, CellphoneDB) across condition or patient (if patient = sample, then across samples)
-        dplyr::mutate(
+        dplyr::reframe(
             pval = survcomp::combine.test(pval),
             LIANA_score = mean(LIANA_score, na.rm = TRUE),
             CellPhoneDB_score = mean(CellPhoneDB_score, na.rm = TRUE),
             CellChat_score = mean(CellChat_score, na.rm = TRUE),
             Cell2Cell_score = mean(Cell2Cell_score, na.rm = TRUE)
-        )
+        ) %>%
+        dplyr::ungroup()
 
     message("Save results...")
     saveRDS(
