@@ -10,7 +10,8 @@ rra_interactions(
   cell2cell_obj,
   cpdb_obj,
   sample_id = NULL,
-  output_dir = "."
+  output_dir = ".",
+  n_perm = 1000
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ rra_interactions(
 \item{sample_id}{sample id to use for saving object}
 
 \item{output_dir}{output directory for saving output (default = '.')}
+
+\item{n_perm}{number of permutations to create pval_dummy variable for computing -log10(pval_dummy) * score, only applicable to CellChat, Cell2Cell and CellPhoneDB}
 }
 \description{
 Rank interactions based on CellChat, LIANA (use all methods), cell2cell and CellPhoneDB
