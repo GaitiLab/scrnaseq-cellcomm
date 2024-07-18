@@ -106,8 +106,7 @@ rra_interactions <- function(
             . / max(.)
         }
 
-
-    ranked_interactions <- RobustRankAggreg::aggregateRanks(rmat = final_rank_mat, method = "RRA") %>%
+    ranked_interactions <- RobustRankAggreg::aggregateRanks(rmat = rank_mat, method = "RRA") %>%
         dplyr::rename(unique_combi = Name) %>%
         tibble::remove_rownames() %>%
         tidyr::separate(unique_combi, into = c("source_target", "complex_interaction"), sep = "\\|") %>%
@@ -129,7 +128,7 @@ rra_interactions <- function(
             dplyr::select(Sample, source_target, complex_interaction, cpdb, CellPhoneDB_score))
     message("Save RRA interactions...")
     saveRDS(
-        interactions_df_aggregated,
+        ranked_interactions,
         glue::glue("{output_dir}/{sample_id}__interactions_agg_rank.rds")
     )
     message("Finished!")
