@@ -80,7 +80,7 @@ format_cell2cell_wrapper <- function(input_interactions_pval, input_interactions
     )
     message("Formatting scores output...")
     interaction_scores_formatted <- format_cell2cell(
-        input_interactions = input_interactions_pval,
+        input_interactions = input_interactions_scores,
         sample_id = sample_id,
         ref_db = ref_db,
         mode = "Cell2Cell_score"
