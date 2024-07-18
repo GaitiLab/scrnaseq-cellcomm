@@ -46,56 +46,24 @@ take_consensus <- function(
         filter(!is.na(pval)) %>%
         filter(pval < alpha) %>%
         dplyr::select(-pval)
-    # r$> head(obj_cellchat)
-    #                 source_target complex_interaction     method                Sample
-    # 1        Malignant__Malignant COL4A2__ITGAV:ITGB8 CellChatv2 6514_enhancing_border
-    # 2  Oligodendrocyte__Malignant COL4A5__ITGAV:ITGB8 CellChatv2 6514_enhancing_border
-    # 3      Macrophage__Macrophage   SPP1__ITGAV:ITGB1 CellChatv2 6514_enhancing_border
-    # 4       Microglia__Macrophage   SPP1__ITGAV:ITGB1 CellChatv2 6514_enhancing_border
-    # 5 Oligodendrocyte__Macrophage   SPP1__ITGAV:ITGB1 CellChatv2 6514_enhancing_border
-    # 6        Malignant__Malignant   GLS:SLC1A2__GRIA2 CellChatv2 6514_enhancing_border
+
     obj_liana_filtered <- obj_liana %>%
         dplyr::select(dplyr::all_of(common_cols)) %>%
         filter(!is.na(pval)) %>%
         filter(pval < alpha) %>%
         dplyr::select(-pval)
-    # r$> head(obj_liana)
-    # # A tibble: 6 × 4
-    #   source_target                    complex_interaction method Sample
-    #   <chr>                            <chr>               <chr>  <chr>
-    # 1 Oligodendrocyte__Oligodendrocyte CNTN2__CNTN2        LIANA  6514_enhancing_border
-    # 2 Malignant__Malignant             BCAN__EGFR          LIANA  6514_enhancing_border
-    # 3 Oligodendrocyte__Oligodendrocyte CLDN11__CLDN11      LIANA  6514_enhancing_border
-    # 4 Malignant__Malignant             BCAN__NRCAM         LIANA  6514_enhancing_border
-    # 5 Oligodendrocyte__Oligodendrocyte TF__LRP2            LIANA  6514_enhancing_border
-    # 6 Malignant__Malignant             CHL1__CHL1          LIANA  6514_enhancing_border
+
     obj_cell2cell_filtered <- obj_cell2cell %>%
         dplyr::select(dplyr::all_of(common_cols)) %>%
         filter(!is.na(pval)) %>%
         filter(pval < alpha) %>%
         dplyr::select(-pval)
-    # r$> head(obj_cell2cell)
-    #           source_target  complex_interaction    method                Sample
-    # 1 Macrophage__Malignant    NRG2__ERBB2:ERBB3 Cell2Cell 6514_enhancing_border
-    # 2 Macrophage__Malignant    NRG2__ERBB2:ERBB4 Cell2Cell 6514_enhancing_border
-    # 3 Macrophage__Malignant     EREG__EGFR:ERBB2 Cell2Cell 6514_enhancing_border
-    # 4 Macrophage__Malignant    EREG__ERBB2:ERBB4 Cell2Cell 6514_enhancing_border
-    # 5 Macrophage__Malignant NFASC__CNTN1:CNTNAP1 Cell2Cell 6514_enhancing_border
-    # 6 Macrophage__Malignant    THY1__ITGAM:ITGB2 Cell2Cell 6514_enhancing_border
+
     obj_cpdb_filtered <- obj_cpdb %>%
         dplyr::select(dplyr::all_of(common_cols)) %>%
         filter(!is.na(pval)) %>%
         filter(pval < alpha) %>%
         dplyr::select(-pval)
-    # r$> head(obj_cpdb)
-    #            source_target complex_interaction        method                Sample
-    # 1 Macrophage__Macrophage        TGFB1__ITGB1 CellPhoneDBv5 6514_enhancing_border
-    # 2 Macrophage__Macrophage         SPP1__ITGB1 CellPhoneDBv5 6514_enhancing_border
-    # 3 Macrophage__Macrophage         CD14__ITGB1 CellPhoneDBv5 6514_enhancing_border
-    # 4 Macrophage__Macrophage       ADAM17__ITGB1 CellPhoneDBv5 6514_enhancing_border
-    # 5 Macrophage__Macrophage        ADAM9__ITGB1 CellPhoneDBv5 6514_enhancing_border
-    # 6 Macrophage__Macrophage       LGALS1__ITGB1 CellPhoneDBv5 6514_enhancing_border
-
 
     message(glue::glue("Number of interactions in CellChat BEFORE filtering: {nrow(obj_cellchat)}"))
     message(glue::glue("Number of interactions in LIANA BEFORE filtering: {nrow(obj_liana)}"))
@@ -115,14 +83,6 @@ take_consensus <- function(
         obj_cell2cell_filtered,
         obj_cpdb_filtered
     ))
-    # r$> head(interactions_signif)
-    #                 source_target complex_interaction     method                Sample
-    # 1        Malignant__Malignant COL4A2__ITGAV:ITGB8 CellChatv2 6514_enhancing_border
-    # 2  Oligodendrocyte__Malignant COL4A5__ITGAV:ITGB8 CellChatv2 6514_enhancing_border
-    # 3      Macrophage__Macrophage   SPP1__ITGAV:ITGB1 CellChatv2 6514_enhancing_border
-    # 4       Microglia__Macrophage   SPP1__ITGAV:ITGB1 CellChatv2 6514_enhancing_border
-    # 5 Oligodendrocyte__Macrophage   SPP1__ITGAV:ITGB1 CellChatv2 6514_enhancing_border
-    # 6        Malignant__Malignant   GLS:SLC1A2__GRIA2 CellChatv2 6514_enhancing_border
 
     message(glue::glue("Number of interactions: {nrow(interactions_signif)}"))
     utils::capture.output(print(head(interactions_signif)))
@@ -135,16 +95,13 @@ take_consensus <- function(
     cols_oi <- c("Sample", "source_target", "complex_interaction")
     all_votes <- interactions_signif %>%
         dplyr::group_by(Sample, source_target, complex_interaction) %>%
-        dplyr::reframe(n_methods = n(), detected_signif_in_methods = paste0(method, collapse = ", ")) %>%
+        dplyr::reframe(n_methods = dplyr::n(), detected_signif_in_methods = paste0(method, collapse = ", ")) %>%
         dplyr::ungroup() %>%
         # Adding scores regardless of pval (left-join, so only added when already in interactions_signif)
         dplyr::left_join(obj_liana %>% dplyr::select(dplyr::all_of(cols_oi), LIANA_score)) %>%
         dplyr::left_join(obj_cellchat %>% dplyr::select(dplyr::all_of(cols_oi), CellChat_score)) %>%
         dplyr::left_join(obj_cell2cell %>% dplyr::select(dplyr::all_of(cols_oi))) %>%
         dplyr::left_join(obj_cpdb %>% dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score))
-
-    # TODO comment out to see how many values are missing
-    # all_votes[is.na(all_votes)] <- 0
 
     message("Take consensus...")
     # TODO we could change this if necessary
@@ -169,4 +126,5 @@ take_consensus <- function(
         all_votes,
         glue::glue("{output_dir}/{sample_id}__signif_interactions.rds")
     )
+    message("Finished!")
 }
