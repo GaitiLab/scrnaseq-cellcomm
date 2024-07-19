@@ -63,8 +63,8 @@ create_db <- function(source_cpdb_dir, output_dir) {
     Sys.chmod(python_script, mode = "0555")
     system(glue::glue("{run_script} {python_script} {output_dir}"))
     # Revert to previous mode
-    Sys.chmod(run_script, mode = "644")
-    Sys.chmod(python_script, mode = "644")
+    Sys.chmod(run_script, mode = "0644")
+    Sys.chmod(python_script, mode = "0644")
 
     cpdb_file <- list.files(output_dir, pattern = ".zip", full.names = TRUE)[1]
     file.rename(cpdb_file, glue::glue("{output_dir}/cpdb.zip"))
