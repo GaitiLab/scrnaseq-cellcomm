@@ -2,12 +2,10 @@
 #' @description Generates database for LIANA, CellChat, Cell2Cell and CellPhoneDB
 #' @param source_cpdb_dir path to 'interaction_input.csv' from CellPhoneDB database
 #' @param output_dir path to directory for saving the generated CellPhoneDB files
-#' @param work_dir path to directory with /jobs and /Python
 #' @export
-create_db <- function(source_cpdb_dir, output_dir, work_dir = here::here()) {
+create_db <- function(source_cpdb_dir, output_dir) {
     stopifnot(file.exists(source_cpdb_dir))
     stopifnot(file.exists(output_dir))
-    stopifnot(file.exists(work_dir))
     # Interaction 'source_genesymbol' and 'target_genesymbol'
     message("(1/12) Retrieving LIANA DBs...")
     liana_db <- load_liana_dbs()
@@ -57,7 +55,10 @@ create_db <- function(source_cpdb_dir, output_dir, work_dir = here::here()) {
     saveRDS(ref_db, glue::glue("{output_dir}/ref_db.rds"))
 
     message("(12/12) Zipping unified CellPhoneDB database...")
-    system(glue::glue("{work_dir}/scripts/000_create_db.sh {work_dir} {output_dir}"))
+
+    run_script <- system.file("000_create_db.sh", package = "scrnaseq.cellcomm")
+    python_script <- system.file("Python/update_cellphonedb.py", package = "scrnaseq.cellcomm")
+    system(glue::glue("{run_script} {python_script} {output_dir}"))
 
     cpdb_file <- list.files(output_dir, pattern = ".zip", full.names = TRUE)[1]
     file.rename(cpdb_file, glue::glue("{output_dir}/cpdb.zip"))
