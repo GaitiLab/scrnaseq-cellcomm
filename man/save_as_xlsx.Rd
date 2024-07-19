@@ -9,7 +9,8 @@ save_as_xlsx(
   condition_var = "Condition_dummy",
   alpha = 0.05,
   output_dir = ".",
-  output_name = "interactions_summary"
+  output_name = "interactions_summary",
+  is_stringent = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ save_as_xlsx(
 \item{output_dir}{output directory for saving output (default = '.')}
 
 \item{output_name}{name for output file (default = "interactions_summary")}
+
+\item{is_stringent}{only keep stringent interactions (default = FALSE)}
 }
 \description{
 Save interactions as xlsx
