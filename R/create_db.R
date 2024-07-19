@@ -56,7 +56,7 @@ create_db <- function(source_cpdb_dir, output_dir) {
 
     message("(12/12) Zipping unified CellPhoneDB database...")
 
-    run_script <- system.file("000_create_db.sh", package = "scrnaseq.cellcomm")
+    run_script <- system.file("create_db.sh", package = "scrnaseq.cellcomm")
     python_script <- system.file("Python/update_cellphonedb.py", package = "scrnaseq.cellcomm")
     system(glue::glue("{run_script} {python_script} {output_dir}"))
 
