@@ -4,14 +4,12 @@
 \alias{create_db}
 \title{Create interactions databasee}
 \usage{
-create_db(source_cpdb_dir, output_dir, work_dir = here::here())
+create_db(source_cpdb_dir, output_dir)
 }
 \arguments{
 \item{source_cpdb_dir}{path to 'interaction_input.csv' from CellPhoneDB database}
 
 \item{output_dir}{path to directory for saving the generated CellPhoneDB files}
-
-\item{work_dir}{path to directory with /jobs and /Python}
 }
 \description{
 Generates database for LIANA, CellChat, Cell2Cell and CellPhoneDB
