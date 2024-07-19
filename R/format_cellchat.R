@@ -33,8 +33,9 @@ format_cellchat <- function(
     # TODO in future release remove, when switching to new database
     ref_db <- readRDS(ref_db) %>%
         dplyr::select(
-            simple_interaction,
-            complex_interaction, interaction
+            # simple_interaction,
+            complex_interaction,
+            interaction
         )
 
     message("Load interactions")

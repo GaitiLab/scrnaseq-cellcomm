@@ -35,15 +35,17 @@ create_db <- function(source_cpdb_dir, output_dir) {
 
     message("(8/12) Create simplified ref. database...")
     ref_db <- combi_db_filtered$db %>%
-        dplyr::select(source_genesymbol, target_genesymbol, complex_interaction, method, is_dupl_undirected, complex_interaction_OLD) %>%
+        dplyr::select(source_genesymbol, target_genesymbol, complex_interaction, method, is_dupl_undirected, complex_interaction_OLD, interaction) %>%
         dplyr::mutate(
             ligand_complex = stringr::str_replace_all(source_genesymbol, "_", ":"),
             receptor_complex = stringr::str_replace_all(target_genesymbol, "_", ":"),
         ) %>%
         dplyr::select(
             source_genesymbol, target_genesymbol, complex_interaction, ligand_complex, receptor_complex,
-            method, is_dupl_undirected, complex_interaction_OLD
-        )
+            method, is_dupl_undirected, complex_interaction_OLD, interaction
+        ) %>%
+        # TODO Add 'interaction' based on reordering -> testing
+        dplyr::mutate(interaction = complex_interaction, "__", "_")
 
     # Save LIANA db and Cell2Cell db
     message("(9/12) Save unified database for LIANA...")

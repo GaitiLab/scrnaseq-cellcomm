@@ -32,8 +32,9 @@ format_liana <- function(input_interactions, ref_db = "data/interactions_db/ref_
     # TODO in future release remove, when switching to new database
     ref_db <- readRDS(ref_db) %>%
         dplyr::select(
-            simple_interaction,
-            complex_interaction, interaction
+            # simple_interaction,
+            complex_interaction,
+            interaction
         )
     # FIX temporary solution of bug cytotalk (duplicate interactions)
     # interactions$cytotalk <- interactions$cytotalk %>% dplyr::distinct(source, target, ligand.complex, receptor.complex, .keep_all = TRUE)

@@ -28,8 +28,9 @@ format_cell2cell <- function(input_interactions, ref_db = "data/interactions_db/
     # TODO in future release remove, when switching to new database
     ref_db <- readRDS(ref_db) %>%
         dplyr::select(
-            simple_interaction,
-            complex_interaction, interaction
+            # simple_interaction,
+            complex_interaction,
+            interaction
         )
     message(glue::glue("Formatting sample={sample_id}..."))
 
