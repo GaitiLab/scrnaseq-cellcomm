@@ -67,10 +67,10 @@ create_db <- function(source_cpdb_dir, output_dir) {
     Sys.chmod(python_script, mode = "0644")
 
     cpdb_file <- list.files(output_dir, pattern = ".zip", full.names = TRUE)[1]
-    file.rename(cpdb_file, glue::glue("{output_dir}/cpdb.zip"))
+    file.rename(cpdb_file, glue::glue("{output_dir}/cellphonedb.zip"))
 
-    if (file.exists(glue::glue("{output_dir}/cpdb.zip"))) {
-        message("Clean-up redundant files used for generating 'cpdb.zip'...")
+    if (file.exists(glue::glue("{output_dir}/cellphonedb.zip"))) {
+        message("Clean-up redundant files used for generating 'cellphonedb.zip'...")
         files_to_remove <- c("complex_input", "gene_input", "interaction_input", "protein_input")
         for (filename in files_to_remove) {
             file.remove(glue::glue("{output_dir}/{filename}.csv"))
