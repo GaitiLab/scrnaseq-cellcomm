@@ -37,14 +37,14 @@ create_db <- function(source_cpdb_dir, output_dir, work_dir = here::here()) {
 
     message("(8/12) Create simplified ref. database...")
     ref_db <- combi_db_filtered$db %>%
-        dplyr::select(source_genesymbol, target_genesymbol, complex_interaction, method, is_dupl_undirected) %>%
+        dplyr::select(source_genesymbol, target_genesymbol, complex_interaction, method, is_dupl_undirected, complex_interaction_OLD) %>%
         dplyr::mutate(
             ligand_complex = stringr::str_replace_all(source_genesymbol, "_", ":"),
             receptor_complex = stringr::str_replace_all(target_genesymbol, "_", ":"),
         ) %>%
         dplyr::select(
             source_genesymbol, target_genesymbol, complex_interaction, ligand_complex, receptor_complex,
-            method, is_dupl_undirected
+            method, is_dupl_undirected, complex_interaction_OLD
         )
 
     # Save LIANA db and Cell2Cell db
