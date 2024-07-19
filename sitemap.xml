@@ -17,6 +17,7 @@
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/format_cpdb.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/format_liana.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/get_metadata.html</loc></url>
+<url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/get_proteins_wrapper.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/hard_combine_dbs.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/index.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/is_mapped.html</loc></url>
@@ -25,6 +26,7 @@
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/load_liana_dbs.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/lookup_uniprot.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/make_complex.html</loc></url>
+<url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/make_complex_wrapper.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/order_vector.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/prepare_data.html</loc></url>
 <url><loc>https://gaitilab.github.io/scrnaseq-cellcomm/reference/reduce_seurat_obj.html</loc></url>
