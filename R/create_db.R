@@ -1,4 +1,3 @@
-.onLoad <- function(libname, pkgname) {
 #' @title Create interactions databasee
 #' @description Generates database for LIANA, CellChat, Cell2Cell and CellPhoneDB
 #' @param source_cpdb_dir path to 'interaction_input.csv' from CellPhoneDB database
