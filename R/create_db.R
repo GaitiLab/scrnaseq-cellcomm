@@ -1,7 +1,4 @@
 .onLoad <- function(libname, pkgname) {
-    ns <- topenv()
-    ns$run_script <- system.file("create_db.sh", package = "scrnaseq.cellcomm")
-    ns$python_script <- system.file("Python/update_cellphonedb.py", package = "scrnaseq.cellcomm")
 #' @title Create interactions databasee
 #' @description Generates database for LIANA, CellChat, Cell2Cell and CellPhoneDB
 #' @param source_cpdb_dir path to 'interaction_input.csv' from CellPhoneDB database
@@ -59,15 +56,12 @@ create_db <- function(source_cpdb_dir, output_dir) {
     saveRDS(ref_db, glue::glue("{output_dir}/ref_db.rds"))
 
     message("(12/12) Zipping unified CellPhoneDB database...")
-
     run_script <- system.file("create_db.sh", package = "scrnaseq.cellcomm")
     python_script <- system.file("Python/update_cellphonedb.py", package = "scrnaseq.cellcomm")
 
     # TODO change when alternative found, make executable
     Sys.chmod(run_script, mode = "0555")
     Sys.chmod(python_script, mode = "0555")
-    system(glue::glue("{run_script} {python_script} {output_dir}"))
-
     system(glue::glue("{run_script} {python_script} {output_dir}"))
 
     cpdb_file <- list.files(output_dir, pattern = ".zip", full.names = TRUE)[1]
