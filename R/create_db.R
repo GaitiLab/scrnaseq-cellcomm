@@ -45,7 +45,7 @@ create_db <- function(source_cpdb_dir, output_dir) {
             method, is_dupl_undirected, complex_interaction_OLD, interaction
         ) %>%
         # TODO Add 'interaction' based on reordering -> testing
-        dplyr::mutate(interaction = complex_interaction, "__", "_")
+        dplyr::mutate(interaction = stringr::str_replace_all(complex_interaction, "__", "_"))
 
     # Save LIANA db and Cell2Cell db
     message("(9/12) Save unified database for LIANA...")
