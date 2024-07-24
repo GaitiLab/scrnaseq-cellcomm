@@ -36,8 +36,6 @@ format_liana <- function(input_interactions, ref_db = "data/interactions_db/ref_
             complex_interaction,
             interaction
         )
-    # FIX temporary solution of bug cytotalk (duplicate interactions)
-    # interactions$cytotalk <- interactions$cytotalk %>% dplyr::distinct(source, target, ligand.complex, receptor.complex, .keep_all = TRUE)
 
     interactions <- interactions %>%
         liana::liana_aggregate() %>%
