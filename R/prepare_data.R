@@ -63,6 +63,12 @@ prepare_data <- function(
         message("Normalizing data...")
         seurat_obj <- Seurat::NormalizeData(seurat_obj)
 
+        # Ensure factor only contain cell types that are included in the object (aka passed the filtering)
+        metadata <- seurat_obj@meta.data
+        metadata[, annot] <- factor(metadata[, annot], levels = unique(metadata[, annot]))
+        seurat_obj <- Seurat::AddMetaData(seurat_obj, metadata = metadata)
+
+
         message("Saving Seurat object...")
         saveRDS(
             seurat_obj,
