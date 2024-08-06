@@ -7,6 +7,7 @@
 #' @param n_perm Number of permutations for permutation testing (default = 1000)
 #' @export
 run_cellchat <- function(gene_expr, annot, interactions_db, output_dir = ".", min_cells = 5, n_perm = 1000) {
+    options(future.globals.maxSize = 8000 * 1024**2)
     #  Sanity checks
     if (!(file.exists(gene_expr) && endsWith(gene_expr, ".rds"))) {
         stop("Seurat object ('gene_expr') does not exists or is not an RDS object")
