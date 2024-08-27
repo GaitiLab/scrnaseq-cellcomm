@@ -1,0 +1,110 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# Coding environment 
+.vscode
+
+# Other files (cache, etc)
+._.*
+._*
+.DS_Store
+jobs/pipeline_runs/*/.nextflow/*
+
+# Python
+Python/__pycache__
+
+
+# Files
+000_misc_local/
+001_data_local/
+000_misc
+001_data
+scripts/ARCHIVE
+output/
+*_local*
+
+# Log files
+logs/
+omnipathr-log
+nf-logs
+slurm_out
+.nextflow.log*
+
+.fuse_hidden*
+**/.nextflow/
+
+# jobs/
+# !jobs/[0-5][0-9][0-9]*\.sh
+# scripts/
+# !scripts/[0-4][0-9][0-9]*\.R
+# jobs/pipeline_runs
+
+!017_update_cellphonedb.py
+!Python/202_cci_cell2cell.py
+!Python/203_cci_cpdb.py
+
+
+# Development scripts
+**/TEST-*
+**/DEV-*
+FIGURES-*
+TEMP-*
+
+# Nextflow (containing symlinks)
+nf-config-local
+
+notebooks/
+*.rds
+
+002_WIP_Figures
+
+nf-work
+test_pipeline*
+
+002_WIP_Figures
+*/INACTIVE
+scripts/INACTIVE
+
+test
+tests
+data
+*.csv
+*.rds
+docs
