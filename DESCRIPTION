@@ -1,10 +1,10 @@
 Package: scrnaseq.cellcomm
-Title: What the Package Does (One Line, Title Case)
+Title: scrnaseq-cellcomm: package containing all functions used in the GaitiLab/scrnaseq-cellcomm-pipeline
 Version: 1.0.0
 Authors@R:
     person("Joan", "Kant", email = "Joan.Kant@uhn.ca", role = c("cre"),
            comment = c(ORCID = "0009-0007-1837-5854"))
-Description: What the package does (one paragraph).
+Description: scrnaseq-cellcomm comprises of all functions used in the GaitiLab/scrnaseq-cellcomm-pipeline which aims to infer cell-cell-interactions from scRNAseq data. This is done by leveraging publicly available tools (LIANA, CellChat, CellPhoneDB and cell2cell).
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
