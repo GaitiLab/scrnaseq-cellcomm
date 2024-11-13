@@ -38,8 +38,9 @@ aggregate_samples <- function(input_file, condition_var = "Condition_dummy", out
             CellChat_score = mean(CellChat_score, na.rm = TRUE),
             Cell2Cell_score = mean(Cell2Cell_score, na.rm = TRUE)
         ) %>%
-        dplyr::ungroup() %>%
-        dplyr::mutate(pval_adj = p.adjust(pval, "BH"))
+        dplyr::ungroup()
+
+    obj$pval_adj <- p.adjust(obj$pval, "BH")
 
     message("Save results...")
     saveRDS(
