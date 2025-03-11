@@ -8,8 +8,7 @@
 #' @export
 prepare_data <- function(
     input_file, annot,
-    sample_id = NULL, output_dir = ".",
-    is_confident = FALSE, min_cells = 5) {
+    sample_id = NULL, output_dir = ".", min_cells = 5) {
     #  Sanity checks
     if (!(file.exists(input_file) && endsWith(input_file, ".rds"))) {
         stop("File does not exists or is not an RDS object")
@@ -31,11 +30,6 @@ prepare_data <- function(
     GaitiLabUtils::create_dir(output_seurat)
     GaitiLabUtils::create_dir(output_mtx)
 
-
-    # Only relevant for internal project
-    if (is_confident) {
-        seurat_obj <- subset(seurat_obj, subset = Confident_Annotation)
-    }
     message(glue::glue("Only keep cell type groups with at least {min_cells} cells"))
     seurat_obj <- filtering(
         seurat_obj,

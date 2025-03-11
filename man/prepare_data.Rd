@@ -9,7 +9,6 @@ prepare_data(
   annot,
   sample_id = NULL,
   output_dir = ".",
-  is_confident = FALSE,
   min_cells = 5
 )
 }
