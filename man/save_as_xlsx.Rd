@@ -6,7 +6,6 @@
 \usage{
 save_as_xlsx(
   interactions_agg_integration,
-  condition_var = "Condition_dummy",
   alpha = 0.05,
   output_dir = ".",
   output_name = "interactions_summary",
@@ -16,8 +15,6 @@ save_as_xlsx(
 \arguments{
 \item{interactions_agg_integration}{path to '402c_filtering_aggregated_res.rds'}
 
-\item{condition_var}{Variabile containing the 'condition' (group/category) of the samples (default = "Condition_dummy")}
-
 \item{alpha}{significance threshold for filtering p-values (default = 0.05)}
 
 \item{output_dir}{output directory for saving output (default = '.')}
@@ -25,6 +22,8 @@ save_as_xlsx(
 \item{output_name}{name for output file (default = "interactions_summary")}
 
 \item{is_stringent}{only keep stringent interactions (default = FALSE)}
+
+\item{condition_var}{Variabile containing the 'condition' (group/category) of the samples (default = "Condition_dummy")}
 }
 \description{
 Save interactions as xlsx

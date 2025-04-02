@@ -10,19 +10,35 @@
 #' @importFrom dplyr %>%
 #' @export
 take_consensus <- function(
-    cellchat_obj, liana_obj, cell2cell_obj, cpdb_obj,
-    sample_id = NULL, output_dir = ".", alpha = 0.05) {
+    cellchat_obj,
+    liana_obj,
+    cell2cell_obj,
+    cpdb_obj,
+    sample_id = NULL,
+    output_dir = ".",
+    alpha = 0.05) {
     #  Sanity checks
-    if (!(file.exists(cellchat_obj) && endsWith(cellchat_obj, ".rds"))) {
-        stop(glue::glue("'{cellchat_obj}' does not exists or is not an RDS object"))
+    if (
+        !(file.exists(cellchat_obj) && endsWith(tolower(cellchat_obj), ".rds"))
+    ) {
+        stop(glue::glue(
+            "'{cellchat_obj}' does not exists or is not an RDS object"
+        ))
     }
-    if (!(file.exists(liana_obj) && endsWith(liana_obj, ".rds"))) {
-        stop(glue::glue("'{liana_obj}' does not exists or is not an RDS object"))
+    if (!(file.exists(liana_obj) && endsWith(tolower(liana_obj), ".rds"))) {
+        stop(glue::glue(
+            "'{liana_obj}' does not exists or is not an RDS object"
+        ))
     }
-    if (!(file.exists(cell2cell_obj) && endsWith(cell2cell_obj, ".rds"))) {
-        stop(glue::glue("'{cell2cell_obj}' does not exists or is not an RDS object"))
+    if (
+        !(file.exists(cell2cell_obj) &&
+            endsWith(tolower(cell2cell_obj), ".rds"))
+    ) {
+        stop(glue::glue(
+            "'{cell2cell_obj}' does not exists or is not an RDS object"
+        ))
     }
-    if (!(file.exists(cpdb_obj) && endsWith(cpdb_obj, ".rds"))) {
+    if (!(file.exists(cpdb_obj) && endsWith(tolower(cpdb_obj), ".rds"))) {
         stop(glue::glue("'{cpdb_obj}' does not exists or is not an RDS object"))
     }
     if (!file.exists(output_dir)) {
@@ -38,7 +54,13 @@ take_consensus <- function(
     obj_liana <- readRDS(liana_obj)
     obj_cell2cell <- readRDS(cell2cell_obj)
     obj_cpdb <- readRDS(cpdb_obj)
-    common_cols <- c("source_target", "complex_interaction", "pval", "method", "Sample")
+    common_cols <- c(
+        "source_target",
+        "complex_interaction",
+        "pval",
+        "method",
+        "Sample"
+    )
 
     message(glue::glue("Filter by significance... (alpha = {alpha})"))
     obj_cellchat_filtered <- obj_cellchat %>%
@@ -65,24 +87,42 @@ take_consensus <- function(
         filter(pval < alpha) %>%
         dplyr::select(-pval)
 
-    message(glue::glue("Number of interactions in CellChat BEFORE filtering: {nrow(obj_cellchat)}"))
-    message(glue::glue("Number of interactions in LIANA BEFORE filtering: {nrow(obj_liana)}"))
-    message(glue::glue("Number of interactions in Cell2Cell BEFORE filtering: {nrow(obj_cell2cell)}"))
-    message(glue::glue("Number of interactions in CPDB BEFORE filtering: {nrow(obj_cpdb)}"))
+    message(glue::glue(
+        "Number of interactions in CellChat BEFORE filtering: {nrow(obj_cellchat)}"
+    ))
+    message(glue::glue(
+        "Number of interactions in LIANA BEFORE filtering: {nrow(obj_liana)}"
+    ))
+    message(glue::glue(
+        "Number of interactions in Cell2Cell BEFORE filtering: {nrow(obj_cell2cell)}"
+    ))
+    message(glue::glue(
+        "Number of interactions in CPDB BEFORE filtering: {nrow(obj_cpdb)}"
+    ))
 
-
-    message(glue::glue("Number of interactions in CellChat AFTER filtering: {nrow(obj_cellchat_filtered)}"))
-    message(glue::glue("Number of interactions in LIANA AFTER filtering: {nrow(obj_liana_filtered)}"))
-    message(glue::glue("Number of interactions in Cell2Cell AFTER filtering: {nrow(obj_cell2cell_filtered)}"))
-    message(glue::glue("Number of interactions in CPDB AFTER filtering: {nrow(obj_cpdb_filtered)}"))
+    message(glue::glue(
+        "Number of interactions in CellChat AFTER filtering: {nrow(obj_cellchat_filtered)}"
+    ))
+    message(glue::glue(
+        "Number of interactions in LIANA AFTER filtering: {nrow(obj_liana_filtered)}"
+    ))
+    message(glue::glue(
+        "Number of interactions in Cell2Cell AFTER filtering: {nrow(obj_cell2cell_filtered)}"
+    ))
+    message(glue::glue(
+        "Number of interactions in CPDB AFTER filtering: {nrow(obj_cpdb_filtered)}"
+    ))
 
     message("Combine the different methods...")
-    interactions_signif <- do.call(rbind, list(
-        obj_cellchat_filtered,
-        obj_liana_filtered,
-        obj_cell2cell_filtered,
-        obj_cpdb_filtered
-    ))
+    interactions_signif <- do.call(
+        rbind,
+        list(
+            obj_cellchat_filtered,
+            obj_liana_filtered,
+            obj_cell2cell_filtered,
+            obj_cpdb_filtered
+        )
+    )
 
     message(glue::glue("Number of interactions: {nrow(interactions_signif)}"))
     utils::capture.output(print(head(interactions_signif)))
@@ -95,27 +135,46 @@ take_consensus <- function(
     cols_oi <- c("Sample", "source_target", "complex_interaction")
     all_votes <- interactions_signif %>%
         dplyr::group_by(Sample, source_target, complex_interaction) %>%
-        dplyr::reframe(n_methods = dplyr::n(), detected_signif_in_methods = paste0(method, collapse = ", ")) %>%
+        dplyr::reframe(
+            n_methods = dplyr::n(),
+            detected_signif_in_methods = paste0(method, collapse = ", ")
+        ) %>%
         dplyr::ungroup() %>%
         # Adding scores regardless of pval (left-join, so only added when already in interactions_signif)
-        dplyr::left_join(obj_liana %>% dplyr::select(dplyr::all_of(cols_oi), LIANA_score)) %>%
-        dplyr::left_join(obj_cellchat %>% dplyr::select(dplyr::all_of(cols_oi), CellChat_score)) %>%
-        dplyr::left_join(obj_cell2cell %>% dplyr::select(dplyr::all_of(cols_oi), Cell2Cell_score)) %>%
-        dplyr::left_join(obj_cpdb %>% dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score))
+        dplyr::left_join(
+            obj_liana %>% dplyr::select(dplyr::all_of(cols_oi), LIANA_score)
+        ) %>%
+        dplyr::left_join(
+            obj_cellchat %>%
+                dplyr::select(dplyr::all_of(cols_oi), CellChat_score)
+        ) %>%
+        dplyr::left_join(
+            obj_cell2cell %>%
+                dplyr::select(dplyr::all_of(cols_oi), Cell2Cell_score)
+        ) %>%
+        dplyr::left_join(
+            obj_cpdb %>%
+                dplyr::select(dplyr::all_of(cols_oi), CellPhoneDB_score)
+        )
 
     message("Take consensus...")
     # TODO we could change this if necessary
     interactions_mvoted <- all_votes %>%
         dplyr::group_by(Sample, source_target, complex_interaction) %>%
         dplyr::mutate(
-            lenient_voting = (n_methods >= 3) & stringr::str_detect(detected_signif_in_methods, "LIANA"),
+            lenient_voting = (n_methods >= 3) &
+                stringr::str_detect(detected_signif_in_methods, "LIANA"),
             stringent_voting = (n_methods == 4)
         ) %>%
         dplyr::ungroup() %>%
         data.frame()
 
-    message(glue::glue("Number of interactions after consensus LENIENT: {nrow(interactions_mvoted %>% filter(lenient_voting))}"))
-    message(glue::glue("Number of interactions after consensus STRINGENT: {nrow(interactions_mvoted %>% filter(stringent_voting))}"))
+    message(glue::glue(
+        "Number of interactions after consensus LENIENT: {nrow(interactions_mvoted %>% filter(lenient_voting))}"
+    ))
+    message(glue::glue(
+        "Number of interactions after consensus STRINGENT: {nrow(interactions_mvoted %>% filter(stringent_voting))}"
+    ))
 
     message("Save output...")
     saveRDS(

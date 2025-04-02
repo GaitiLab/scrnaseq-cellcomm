@@ -15,10 +15,14 @@ filter_agg_res <- function(
     # Load additional libraries
     if (file.exists(input_dir)) {
         message("Load interactions after aggregation: binarized...")
-        interactions_binarized <- readRDS(glue::glue("{input_dir}/402a_filtering_detect_in_multi_samples.rds"))
+        interactions_binarized <- readRDS(glue::glue(
+            "{input_dir}/402a_filtering_detect_in_multi_samples.rds"
+        ))
 
         message("Load interactions after aggregation: continuous...")
-        interactions_continuous <- readRDS(glue::glue("{input_dir}/402b_aggregation_samples.rds"))
+        interactions_continuous <- readRDS(glue::glue(
+            "{input_dir}/402b_aggregation_samples.rds"
+        ))
     } else {
         message("Load interactions after aggregation: binarized...")
         interactions_binarized <- readRDS(interactions_agg_binarized)
@@ -29,7 +33,10 @@ filter_agg_res <- function(
 
     message("Combine...")
     combi <- interactions_binarized %>%
-        dplyr::left_join(interactions_continuous, by = c(condition_var, "complex_interaction", "source_target"))
+        dplyr::left_join(
+            interactions_continuous,
+            by = c(condition_var, "complex_interaction", "source_target")
+        )
     message(glue::glue("Number of rows: {nrow(combi)}"))
 
     message("Save results...")

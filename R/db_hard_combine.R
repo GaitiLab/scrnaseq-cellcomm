@@ -18,6 +18,13 @@ hard_combine_dbs <- function(cellchat_db, cpdb_db, liana_db) {
     cpdb_cellchat_db[missing_cols] <- ""
 
     # Combine LIANA database with CellChat and CellphoneDB databases
-    db_combined <- rbind(liana_db, cpdb_cellchat_db) %>% tidyr::unite(complex_interaction, source_genesymbol, target_genesymbol, sep = "__", remove = FALSE)
+    db_combined <- rbind(liana_db, cpdb_cellchat_db) %>%
+        tidyr::unite(
+            complex_interaction,
+            source_genesymbol,
+            target_genesymbol,
+            sep = "__",
+            remove = FALSE
+        )
     return(db_combined)
 }

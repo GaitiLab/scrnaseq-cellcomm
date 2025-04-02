@@ -8,7 +8,13 @@
 #' @param output_dir output directory for saving output (default = '.')
 #' @export
 #' @importFrom dplyr %>%
-combine_samples <- function(input_dir, metadata, patient_var, condition_var = "Condition_dummy", sample_var = "Sample", output_dir = ".") {
+combine_samples <- function(
+    input_dir,
+    metadata,
+    patient_var,
+    condition_var = "Condition_dummy",
+    sample_var = "Sample",
+    output_dir = ".") {
     # Variables from metadata to add
     cols_oi <- unique(c(sample_var, condition_var, patient_var))
 
@@ -16,16 +22,22 @@ combine_samples <- function(input_dir, metadata, patient_var, condition_var = "C
     if (!file.exists(metadata)) {
         stop("Not a valid path")
     }
-    all_mvoted <- list.files(input_dir,
-        full.names = TRUE, pattern = glue::glue("*__interactions_mvoted.rds")
+    all_mvoted <- list.files(
+        input_dir,
+        full.names = TRUE,
+        pattern = glue::glue("*__interactions_mvoted.rds")
     )
 
-    all_sign_interactions <- list.files(input_dir,
-        full.names = TRUE, pattern = glue::glue("*__signif_interactions.rds")
+    all_sign_interactions <- list.files(
+        input_dir,
+        full.names = TRUE,
+        pattern = glue::glue("*__signif_interactions.rds")
     )
 
-    interactions_agg_rank <- list.files(input_dir,
-        full.names = TRUE, pattern = glue::glue("*__interactions_agg_rank.rds")
+    interactions_agg_rank <- list.files(
+        input_dir,
+        full.names = TRUE,
+        pattern = glue::glue("*__interactions_agg_rank.rds")
     )
 
     if (length(all_mvoted) == 0) {
@@ -45,12 +57,16 @@ combine_samples <- function(input_dir, metadata, patient_var, condition_var = "C
     all_mvoted <- do.call(rbind, lapply(all_mvoted, readRDS))
 
     message("Load & Hard combine 'signif_interactions' dataframes...")
-    all_sign_interactions <- do.call(rbind, lapply(all_sign_interactions, readRDS))
-
+    all_sign_interactions <- do.call(
+        rbind,
+        lapply(all_sign_interactions, readRDS)
+    )
 
     message("Load & Hard combine 'interactions_agg_rank' dataframes...")
-    interactions_agg_rank <- do.call(rbind, lapply(interactions_agg_rank, readRDS))
-
+    interactions_agg_rank <- do.call(
+        rbind,
+        lapply(interactions_agg_rank, readRDS)
+    )
 
     # Check whether cols_oi are part of metadata
     cols <- colnames(metadata)
@@ -83,18 +99,23 @@ combine_samples <- function(input_dir, metadata, patient_var, condition_var = "C
     # In case there is no condition given, put all samples into one group.
     if (condition_var == "Condition_dummy") {
         all_mvoted <- all_mvoted %>% dplyr::mutate(Condition_dummy == 1)
-        all_sign_interactions <- all_sign_interactions %>% dplyr::mutate(Condition_dummy == 1)
-        interactions_agg_rank <- interactions_agg_rank %>% dplyr::mutate(Condition_dummy == 1)
+        all_sign_interactions <- all_sign_interactions %>%
+            dplyr::mutate(Condition_dummy == 1)
+        interactions_agg_rank <- interactions_agg_rank %>%
+            dplyr::mutate(Condition_dummy == 1)
     }
 
     message("Save output files...")
-    saveRDS(all_mvoted,
+    saveRDS(
+        all_mvoted,
         file = glue::glue("{output_dir}/401_samples_interactions_mvoted.rds")
     )
-    saveRDS(all_sign_interactions,
+    saveRDS(
+        all_sign_interactions,
         file = glue::glue("{output_dir}/401_samples_sign_interactions.rds")
     )
-    saveRDS(interactions_agg_rank,
+    saveRDS(
+        interactions_agg_rank,
         file = glue::glue("{output_dir}/401_samples_interactions_agg_rank.rds")
     )
 

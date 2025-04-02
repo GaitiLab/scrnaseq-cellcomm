@@ -3,41 +3,88 @@
 #' @export
 #' @importFrom dplyr %>%
 db_filtering <- function(db) {
-    other_cols <- setdiff(colnames(db), c("source_genesymbol", "target_genesymbol", "complex_interaction"))
+    other_cols <- setdiff(
+        colnames(db),
+        c("source_genesymbol", "target_genesymbol", "complex_interaction")
+    )
     db <- db %>%
         # Split into subunits
-        tidyr::separate(source_genesymbol, paste0("source_genesymbol_subunit_", seq_len(5)),
-            sep = "_", remove = FALSE
+        tidyr::separate(
+            source_genesymbol,
+            paste0("source_genesymbol_subunit_", seq_len(5)),
+            sep = "_",
+            remove = FALSE
         ) %>%
-        tidyr::separate(target_genesymbol, paste0("target_genesymbol_subunit_", seq_len(5)),
-            sep = "_", remove = FALSE
+        tidyr::separate(
+            target_genesymbol,
+            paste0("target_genesymbol_subunit_", seq_len(5)),
+            sep = "_",
+            remove = FALSE
         )
     message(glue::glue("Number of interactions: {nrow(db)}..."))
 
     db <- db %>%
         dplyr::mutate(
-            source_genesymbol_ordered := apply(db %>% dplyr::select(dplyr::starts_with("source_genesymbol_subunit")), 1, make_complex_wrapper, "_"),
-            target_genesymbol_ordered := apply(db %>% dplyr::select(dplyr::starts_with("target_genesymbol_subunit")), 1, make_complex_wrapper, "_")
+            source_genesymbol_ordered := apply(
+                db %>%
+                    dplyr::select(dplyr::starts_with(
+                        "source_genesymbol_subunit"
+                    )),
+                1,
+                make_complex_wrapper,
+                "_"
+            ),
+            target_genesymbol_ordered := apply(
+                db %>%
+                    dplyr::select(dplyr::starts_with(
+                        "target_genesymbol_subunit"
+                    )),
+                1,
+                make_complex_wrapper,
+                "_"
+            )
         ) %>%
         # Save original source and genesymbols (unordered) with prefix '_OG'
-        dplyr::rename(source_genesymbol_OG = source_genesymbol, target_genesymbol_OG = target_genesymbol) %>%
-        dplyr::select(-dplyr::starts_with("source_genesymbol_subunit"), -dplyr::starts_with("target_genesymbol_subunit")) %>%
-        # Then rename ordered source and genesymbols
-        dplyr::rename(source_genesymbol = source_genesymbol_ordered, target_genesymbol = target_genesymbol_ordered) %>%
-        # Split into subunits (these are the ordered subunits)
-        tidyr::separate(source_genesymbol, paste0("source_genesymbol_subunit_", seq_len(5)),
-            sep = "_", remove = FALSE
+        dplyr::rename(
+            source_genesymbol_OG = source_genesymbol,
+            target_genesymbol_OG = target_genesymbol
         ) %>%
-        tidyr::separate(target_genesymbol, paste0("target_genesymbol_subunit_", seq_len(5)),
-            sep = "_", remove = FALSE
+        dplyr::select(
+            -dplyr::starts_with("source_genesymbol_subunit"),
+            -dplyr::starts_with("target_genesymbol_subunit")
+        ) %>%
+        # Then rename ordered source and genesymbols
+        dplyr::rename(
+            source_genesymbol = source_genesymbol_ordered,
+            target_genesymbol = target_genesymbol_ordered
+        ) %>%
+        # Split into subunits (these are the ordered subunits)
+        tidyr::separate(
+            source_genesymbol,
+            paste0("source_genesymbol_subunit_", seq_len(5)),
+            sep = "_",
+            remove = FALSE
+        ) %>%
+        tidyr::separate(
+            target_genesymbol,
+            paste0("target_genesymbol_subunit_", seq_len(5)),
+            sep = "_",
+            remove = FALSE
         )
     message(glue::glue("Number of interactions: {nrow(db)}..."))
 
-
     # Check if subunits have at least 2 characters (otherwise invalid gene)
     message("Filter interactions with invalid subunits...")
-    target_genesymbol_mask <- apply(db %>% dplyr::select(dplyr::starts_with("target_genesymbol_subunit_")), 1, check_length_genesymbol)
-    source_genesymbol_mask <- apply(db %>% dplyr::select(dplyr::starts_with("source_genesymbol_subunit_")), 1, check_length_genesymbol)
+    target_genesymbol_mask <- apply(
+        db %>% dplyr::select(dplyr::starts_with("target_genesymbol_subunit_")),
+        1,
+        check_length_genesymbol
+    )
+    source_genesymbol_mask <- apply(
+        db %>% dplyr::select(dplyr::starts_with("source_genesymbol_subunit_")),
+        1,
+        check_length_genesymbol
+    )
     # Remove interactions where genes only have a single character
     db <- db[source_genesymbol_mask & target_genesymbol_mask, ]
     message(glue::glue("Number of interactions: {nrow(db)}..."))
@@ -51,18 +98,23 @@ db_filtering <- function(db) {
         unlist() %>%
         unique() %>%
         stringr::str_to_upper()
-    all_genes <- data.frame(genesymbol = all_genes[all_genes != ""] %>% unique())
+    all_genes <- data.frame(
+        genesymbol = all_genes[all_genes != ""] %>% unique()
+    )
     proteins <- get_proteins_wrapper(genes_df = all_genes)
-
 
     # Check mapping gene to protein (uniprot)
     source_mask <- apply(
-        db %>% dplyr::select(dplyr::starts_with("source_genesymbol_subunit_")), 1, is_mapped,
+        db %>% dplyr::select(dplyr::starts_with("source_genesymbol_subunit_")),
+        1,
+        is_mapped,
         lookup_table = proteins,
         lookup_var = "genesymbol"
     )
 
-    target_mask <- apply(db %>% dplyr::select(dplyr::starts_with("target_genesymbol_subunit_")), 1,
+    target_mask <- apply(
+        db %>% dplyr::select(dplyr::starts_with("target_genesymbol_subunit_")),
+        1,
         is_mapped,
         lookup_table = proteins,
         lookup_var = "genesymbol"
@@ -92,11 +144,21 @@ db_filtering <- function(db) {
         # Rename previously set 'complex_interaction' (unordered subunits)
         dplyr::rename(complex_interaction_OLD = complex_interaction) %>%
         dplyr::mutate(
-            complex_interaction = paste0(source_genesymbol, "__", target_genesymbol)
+            complex_interaction = paste0(
+                source_genesymbol,
+                "__",
+                target_genesymbol
+            )
         )
     message(glue::glue("Number of interactions: {nrow(db)}..."))
 
-    db <- db %>% filter(!is.na(source_genesymbol), !is.na(target_genesymbol), !is.na(source), !is.na(target))
+    db <- db %>%
+        filter(
+            !is.na(source_genesymbol),
+            !is.na(target_genesymbol),
+            !is.na(source),
+            !is.na(target)
+        )
     message(glue::glue("Number of interactions: {nrow(db)}..."))
 
     collapsed_method <- db %>%
@@ -109,16 +171,32 @@ db_filtering <- function(db) {
         dplyr::left_join(collapsed_method) %>%
         dplyr::arrange(dplyr::across(dplyr::all_of(other_cols), desc)) %>%
         dplyr::distinct(complex_interaction, .keep_all = TRUE) %>%
-        dplyr::mutate(complex_interaction_rev = paste0(target_genesymbol, "__", source_genesymbol))
+        dplyr::mutate(
+            complex_interaction_rev = paste0(
+                target_genesymbol,
+                "__",
+                source_genesymbol
+            )
+        )
     message(glue::glue("Number of interactions: {nrow(db)}..."))
 
     # When reversing order i.e. {target_genesymbol}__{source_genesymbol} -> duplicates
-    duplicate_interactions <- intersect(db %>%
-        filter(source_genesymbol != target_genesymbol) %>%
-        dplyr::pull(complex_interaction_rev), db$complex_interaction)
-    message(glue::glue("Number of duplicated interactions (when undirected): {length(duplicate_interactions)}..."))
+    duplicate_interactions <- intersect(
+        db %>%
+            filter(source_genesymbol != target_genesymbol) %>%
+            dplyr::pull(complex_interaction_rev),
+        db$complex_interaction
+    )
+    message(glue::glue(
+        "Number of duplicated interactions (when undirected): {length(duplicate_interactions)}..."
+    ))
 
     # Not removing these interactions, just marking them with 'is_dupl_undirected'
-    db <- db %>% dplyr::mutate(is_dupl_undirected = complex_interaction %in% duplicate_interactions | complex_interaction_rev %in% duplicate_interactions)
+    db <- db %>%
+        dplyr::mutate(
+            is_dupl_undirected = complex_interaction %in%
+                duplicate_interactions |
+                complex_interaction_rev %in% duplicate_interactions
+        )
     return(list(db = db, gene_info_table = proteins))
 }

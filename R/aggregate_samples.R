@@ -5,7 +5,10 @@
 #' @param condition_var Variabile containing the 'condition' (group/category) of the samples (default = "Condition_dummy")
 #' @export
 #' @importFrom dplyr %>%
-aggregate_samples <- function(input_file, condition_var = "Condition_dummy", output_dir = ".") {
+aggregate_samples <- function(
+    input_file,
+    condition_var = "Condition_dummy",
+    output_dir = ".") {
     message("Load interactions and combine p-values and scores...")
     obj <- readRDS(input_file) %>%
         dplyr::ungroup()

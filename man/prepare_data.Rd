@@ -9,8 +9,8 @@ prepare_data(
   annot,
   sample_id = NULL,
   output_dir = ".",
-  is_confident = FALSE,
-  min_cells = 5
+  min_cells = 5,
+  save_as_10x_format = TRUE
 )
 }
 \arguments{
@@ -23,6 +23,8 @@ prepare_data(
 \item{output_dir}{output directory for saving output (default = '.')}
 
 \item{min_cells}{Minimum number of cells required in each cell group for cell-cell communication (default = 5)}
+
+\item{save_as_10x_format}{Logical indicating whether the expression data needs to be saved in the 10x format (default=TRUE)}
 }
 \description{
 filters data and then normalizes the gene expression

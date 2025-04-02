@@ -1,6 +1,6 @@
 Package: scrnaseq.cellcomm
 Title: scrnaseq-cellcomm: package containing all functions used in the GaitiLab/scrnaseq-cellcomm-pipeline
-Version: 1.0.0
+Version: 1.0.1
 Authors@R:
     person("Joan", "Kant", email = "Joan.Kant@uhn.ca", role = c("cre"),
            comment = c(ORCID = "0009-0007-1837-5854"))
@@ -8,7 +8,7 @@ Description: scrnaseq-cellcomm comprises of all functions used in the GaitiLab/s
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.0), 

@@ -5,13 +5,23 @@
 #' @param ref_db Path to interactions database (default = "data/interactions_db/ref_db.rds")
 #' @param mode 'pval' or 'Cell2Cell_score' dependent on input
 #' @export
-format_cell2cell <- function(input_interactions, ref_db = "data/interactions_db/ref_db.rds", output_dir = ".", sample_id = NULL, mode = "pval") {
+format_cell2cell <- function(
+    input_interactions,
+    ref_db = "data/interactions_db/ref_db.rds",
+    output_dir = ".",
+    sample_id = NULL,
+    mode = "pval") {
     #  Sanity checks
-    if (!(file.exists(input_interactions) && endsWith(input_interactions, ".csv"))) {
-        stop("Interactions file ('input_interactions') does not exists or is not an csv file")
+    if (
+        !(file.exists(input_interactions) &&
+            endsWith(tolower(input_interactions), ".csv"))
+    ) {
+        stop(
+            "Interactions file ('input_interactions') does not exists or is not an csv file"
+        )
     }
     # TODO in future release remove, when switching to new database
-    if (!file.exists(ref_db) && endsWith(input_interactions, ".rds")) {
+    if (!file.exists(ref_db) && endsWith(tolower(input_interactions), ".rds")) {
         stop(glue::glue("{ref_db} path does not exist"))
     }
 
@@ -35,14 +45,16 @@ format_cell2cell <- function(input_interactions, ref_db = "data/interactions_db/
     message(glue::glue("Formatting sample={sample_id}..."))
 
     message("Load interactions...")
-    interactions <- data.frame(data.table::fread(input_interactions, header = TRUE, sep = "\t"),
+    interactions <- data.frame(
+        data.table::fread(input_interactions, header = TRUE, sep = "\t"),
         check.names = FALSE
     )
     message("Formatting results...")
     interactions <- interactions %>%
         dplyr::rowwise() %>%
         dplyr::mutate(
-            interaction = V1 %>% stringr::str_replace_all("\\(|,|\\'|\\)", "") %>%
+            interaction = V1 %>%
+                stringr::str_replace_all("\\(|,|\\'|\\)", "") %>%
                 stringr::str_replace_all(" ", "_")
         ) %>%
         dplyr::ungroup() %>%
@@ -71,7 +83,12 @@ format_cell2cell <- function(input_interactions, ref_db = "data/interactions_db/
 #' @param sample_id sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'cell2cell__{sample_id}.csv')
 #' @param ref_db Path to interactions database (default = "data/interactions_db/ref_db.rds")
 #' @export
-format_cell2cell_wrapper <- function(input_interactions_pval, input_interactions_scores, ref_db = "data/interactions_db/ref_db.rds", output_dir = ".", sample_id = NULL) {
+format_cell2cell_wrapper <- function(
+    input_interactions_pval,
+    input_interactions_scores,
+    ref_db = "data/interactions_db/ref_db.rds",
+    output_dir = ".",
+    sample_id = NULL) {
     message("Formatting p-values output...")
     pval_formatted <- format_cell2cell(
         input_interactions = input_interactions_pval,
@@ -90,7 +107,8 @@ format_cell2cell_wrapper <- function(input_interactions_pval, input_interactions
     interactions <- merge(interaction_scores_formatted, pval_formatted)
 
     message("Save output...")
-    saveRDS(interactions,
+    saveRDS(
+        interactions,
         file = glue::glue("{output_dir}/cell2cell__{sample_id}__postproc.rds")
     )
 
