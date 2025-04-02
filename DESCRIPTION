@@ -8,7 +8,7 @@ Description: scrnaseq-cellcomm comprises of all functions used in the GaitiLab/s
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.0), 

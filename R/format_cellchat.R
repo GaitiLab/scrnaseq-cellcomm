@@ -8,13 +8,19 @@
 format_cellchat <- function(
     input_interactions,
     ref_db = "data/interactions_db/ref_db.rds",
-    output_dir = ".", sample_id = NULL) {
+    output_dir = ".",
+    sample_id = NULL) {
     #  Sanity checks
-    if (!(file.exists(input_interactions) && endsWith(input_interactions, ".rds"))) {
-        stop("Interactions file ('input_interactions') does not exists or is not an RDS object")
+    if (
+        !(file.exists(input_interactions) &&
+            endsWith(tolower(input_interactions), ".rds"))
+    ) {
+        stop(
+            "Interactions file ('input_interactions') does not exists or is not an RDS object"
+        )
     }
     # TODO in future release remove, when switching to new database
-    if (!file.exists(ref_db) && endsWith(input_interactions, ".rds")) {
+    if (!file.exists(ref_db) && endsWith(tolower(input_interactions), ".rds")) {
         stop(glue::glue("{ref_db} path does not exist"))
     }
 
@@ -47,6 +53,9 @@ format_cellchat <- function(
         dplyr::mutate(method = "CellChatv2", Sample = sample_id)
 
     message("Save output...")
-    saveRDS(interactions, glue::glue("{output_dir}/cellchat__{sample_id}__postproc.rds"))
+    saveRDS(
+        interactions,
+        glue::glue("{output_dir}/cellchat__{sample_id}__postproc.rds")
+    )
     message("Finished!")
 }

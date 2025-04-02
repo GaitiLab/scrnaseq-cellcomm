@@ -10,7 +10,13 @@ filter_by_detection_in_multi_samples <- function(
     min_patients = 2,
     condition_var = "Condition_dummy",
     output_dir = ".") {
-    cols_oi <- unique(c("Patient", "Sample", condition_var, "source_target", "complex_interaction"))
+    cols_oi <- unique(c(
+        "Patient",
+        "Sample",
+        condition_var,
+        "source_target",
+        "complex_interaction"
+    ))
 
     if (!file.exists(input_file)) {
         stop(glue::glue("{input_file} is not a valid path"))
@@ -30,7 +36,9 @@ filter_by_detection_in_multi_samples <- function(
 
     # ---- Lenient voting ---- #
     # Check detection of the same interaction in the same patient across samples for the same region
-    message("Voting mode: 'lenient' (interaction needs to be detected in LIANA + 2 other tools)...")
+    message(
+        "Voting mode: 'lenient' (interaction needs to be detected in LIANA + 2 other tools)..."
+    )
     lenient_voting <- input_file %>%
         # Only look at interactions that pass the lenient-filter
         filter(lenient_voting) %>%
@@ -38,7 +46,14 @@ filter_by_detection_in_multi_samples <- function(
         # Count in how many samples detected an interaction per patient
         # lenient_N_samples_same_patient will be 1 if there is only a single sample per patient
         dplyr::group_by_at(
-            dplyr::vars((c(condition_var, "Patient", "source_target", "complex_interaction")))
+            dplyr::vars(
+                (c(
+                    condition_var,
+                    "Patient",
+                    "source_target",
+                    "complex_interaction"
+                ))
+            )
         ) %>%
         dplyr::reframe(
             lenient_detected_same_patient = paste0(Sample, collapse = ", "),
@@ -48,7 +63,9 @@ filter_by_detection_in_multi_samples <- function(
 
     lenient_voting_by_condition <- lenient_voting %>%
         dplyr::group_by_at(
-            dplyr::vars((c(condition_var, "source_target", "complex_interaction")))
+            dplyr::vars(
+                (c(condition_var, "source_target", "complex_interaction"))
+            )
         ) %>%
         # Count in how many patients an interaction was detected per condition or group
         # NOTE: if sample == patient (i.e. 1 sample per patient), this will count how many samples detected an interaction per condition or group
@@ -56,23 +73,30 @@ filter_by_detection_in_multi_samples <- function(
             lenient_condition_n_patients = dplyr::n(),
             lenient_condition_patients = paste0(Patient, collapse = ", "),
             lenient_condition_n_samples = sum(lenient_N_samples_same_patient),
-            lenient_condition_samples = paste0(lenient_detected_same_patient, collapse = ", ")
+            lenient_condition_samples = paste0(
+                lenient_detected_same_patient,
+                collapse = ", "
+            )
         ) %>%
         dplyr::ungroup()
     # NOTE if sample == patient: lenient_N_samples_same_patient == lenient_condition_n_patients
 
-
     n_before <- nrow(lenient_voting_by_condition)
 
-    message(glue::glue("Only keep interactions that are found in at least {min_patients} patients (if patient = sample, then samples)..."))
-    lenient_voting_by_condition <- lenient_voting_by_condition %>% filter(lenient_condition_n_patients >= min_patients)
+    message(glue::glue(
+        "Only keep interactions that are found in at least {min_patients} patients (if patient = sample, then samples)..."
+    ))
+    lenient_voting_by_condition <- lenient_voting_by_condition %>%
+        filter(lenient_condition_n_patients >= min_patients)
     n_after <- nrow(lenient_voting_by_condition)
 
     message(glue::glue("Before filtering: {n_before}"))
     message(glue::glue("After filtering: {n_after}"))
 
     # ---- Stringent voting ---- #
-    message("Voting mode: 'stringent' (interaction needs to be detected in all tools)...")
+    message(
+        "Voting mode: 'stringent' (interaction needs to be detected in all tools)..."
+    )
 
     stringent_voting <- input_file %>%
         # Only look at interactions that pass the stringent-filter
@@ -81,7 +105,12 @@ filter_by_detection_in_multi_samples <- function(
         # Count in how many samples detected an interaction per patient
         # lenient_N_samples_same_patient will be 1 if there is only a single sample per patient
         dplyr::group_by_at(dplyr::vars(
-            (c(condition_var, "Patient", "source_target", "complex_interaction"))
+            (c(
+                condition_var,
+                "Patient",
+                "source_target",
+                "complex_interaction"
+            ))
         )) %>%
         dplyr::reframe(
             stringent_N_samples_same_patient = dplyr::n(),
@@ -92,10 +121,17 @@ filter_by_detection_in_multi_samples <- function(
     stringent_voting_by_condition <- stringent_voting %>%
         # Count in how many patients an interaction was detected per condition or group
         # NOTE: if sample == patient (i.e. 1 sample per patient), this will count how many samples detected an interaction per condition or group
-        dplyr::group_by_at(dplyr::vars((c(condition_var, "source_target", "complex_interaction")))) %>%
+        dplyr::group_by_at(dplyr::vars(
+            (c(condition_var, "source_target", "complex_interaction"))
+        )) %>%
         dplyr::reframe(
-            stringent_condition_n_samples = sum(stringent_N_samples_same_patient),
-            stringent_condition_samples = paste0(stringent_detected_same_patient, collapse = ", "),
+            stringent_condition_n_samples = sum(
+                stringent_N_samples_same_patient
+            ),
+            stringent_condition_samples = paste0(
+                stringent_detected_same_patient,
+                collapse = ", "
+            ),
             stringent_condition_n_patients = dplyr::n(),
             stringent_condition_patients = paste0(Patient, collapse = ", ")
         ) %>%
@@ -104,7 +140,9 @@ filter_by_detection_in_multi_samples <- function(
 
     n_before <- nrow(stringent_voting_by_condition)
 
-    message(glue::glue("Only keep interactions that are found in at least {min_patients} patients..."))
+    message(glue::glue(
+        "Only keep interactions that are found in at least {min_patients} patients..."
+    ))
     stringent_voting_by_condition <- stringent_voting_by_condition %>%
         filter(stringent_condition_n_patients >= min_patients)
 
@@ -124,18 +162,41 @@ filter_by_detection_in_multi_samples <- function(
             stringent_voting_by_condition,
         ) %>%
         # If not found by stringent, then automatically 'lenient', set in that case to 'FALSE'
-        dplyr::mutate(stringent_condition = ifelse(is.na(stringent_condition), FALSE, stringent_condition)) %>%
+        dplyr::mutate(
+            stringent_condition = ifelse(
+                is.na(stringent_condition),
+                FALSE,
+                stringent_condition
+            )
+        ) %>%
         dplyr::ungroup()
 
     # Handling sample == patient (i.e. only 1 sample per patient) -> remove redundant columns
-    if (sum(combined_voting$lenient_condition_n_patients != combined_voting$lenient_condition_n_samples) == 0 & sum(combined_voting$lenient_condition_samples != combined_voting$lenient_condition_samples) == 0) {
-        combined_voting <- combined_voting %>% dplyr::select(
-            -lenient_condition_n_samples, -lenient_condition_samples,
-            -stringent_condition_n_samples, -stringent_condition_samples
-        )
+    if (
+        sum(
+            combined_voting$lenient_condition_n_patients !=
+                combined_voting$lenient_condition_n_samples
+        ) ==
+            0 &
+            sum(
+                combined_voting$lenient_condition_samples !=
+                    combined_voting$lenient_condition_samples
+            ) ==
+                0
+    ) {
+        combined_voting <- combined_voting %>%
+            dplyr::select(
+                -lenient_condition_n_samples,
+                -lenient_condition_samples,
+                -stringent_condition_n_samples,
+                -stringent_condition_samples
+            )
     }
 
     message("Save results...")
-    saveRDS(combined_voting, glue::glue("{output_dir}/402a_filtering_detect_in_multi_samples.rds"))
+    saveRDS(
+        combined_voting,
+        glue::glue("{output_dir}/402a_filtering_detect_in_multi_samples.rds")
+    )
     message("Finished!")
 }

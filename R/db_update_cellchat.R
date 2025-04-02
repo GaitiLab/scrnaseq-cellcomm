@@ -26,7 +26,8 @@ update_cellchat_db <- function(geneInfo, db, output_dir) {
     missing_cols <- setdiff(colnames(cellchat_db_geneinfo), colnames(geneInfo))
     geneInfo[, missing_cols] <- ""
 
-    cellchat_db_geneinfo <- rbind(cellchat_db_geneinfo, geneInfo) %>% dplyr::distinct(Symbol, .keep_all = TRUE)
+    cellchat_db_geneinfo <- rbind(cellchat_db_geneinfo, geneInfo) %>%
+        dplyr::distinct(Symbol, .keep_all = TRUE)
 
     # Create new CellChatDB
     cellchatDB_Omni <- liana:::cellchat_formatDB(
@@ -41,7 +42,5 @@ update_cellchat_db <- function(geneInfo, db, output_dir) {
     )
 
     # Save CellChatDB
-    saveRDS(cellchatDB_Omni,
-        file = glue::glue("{output_dir}/cellchat_db.rds")
-    )
+    saveRDS(cellchatDB_Omni, file = glue::glue("{output_dir}/cellchat_db.rds"))
 }

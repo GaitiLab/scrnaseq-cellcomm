@@ -13,7 +13,7 @@ check_length_genesymbol <- function(vec) {
 order_vector <- function(vec) {
     sorted_vec <- sort(vec)
     placeholder <- rep(NA, length(vec))
-    placeholder[seq(length(sorted_vec))] <- sorted_vec
+    placeholder[seq_len(length(sorted_vec))] <- sorted_vec
     return(placeholder)
 }
 
@@ -62,7 +62,8 @@ is_mapped <- function(vec, lookup_table, lookup_var = "genesymbol") {
                 vec_not_na,
                 lookup_table %>% dplyr::pull(!!dplyr::sym(lookup_var))
             )
-        ) == length(vec_not_na)
+        ) ==
+            length(vec_not_na)
     )
 }
 
@@ -71,7 +72,15 @@ is_mapped <- function(vec, lookup_table, lookup_var = "genesymbol") {
 #' @param gene_uniprot_table dataframe containing at least 'genesymbol' and 'uniprot' columns
 #' @return string with all protein complexes that are involved separate by an underscore, if no protein found then returns vector of NAs (same length as input vector)
 add_proteins <- function(vec, gene_uniprot_table) {
-    tmp <- paste0(lapply(vec[!is.na(vec)], lookup_uniprot, gene_uniprot_table = gene_uniprot_table) %>% unlist(), collapse = "_")
+    tmp <- paste0(
+        lapply(
+            vec[!is.na(vec)],
+            lookup_uniprot,
+            gene_uniprot_table = gene_uniprot_table
+        ) %>%
+            unlist(),
+        collapse = "_"
+    )
     if (tmp == "") {
         return(NA)
     } else {
@@ -91,7 +100,8 @@ get_proteins_wrapper <- function(genes_df) {
         # Match ID
         genesymbol = genesymbol,
         # Variables to retrieve from OmnipathR
-        uniprot, uniprot_entry
+        uniprot,
+        uniprot_entry
     )
     proteins <- OmnipathR::translate_ids(
         # Query

@@ -9,11 +9,11 @@
 #' @importFrom dplyr %>%
 save_as_xlsx <- function(
     interactions_agg_integration,
-    condition_var = "Condition_dummy",
     alpha = 0.05,
     output_dir = ".",
-    output_name = "interactions_summary", is_stringent = FALSE) {
-    output_filename <- glue::glue("{output_dir}/{output_name}.xlsx")
+    output_name = "interactions_summary",
+    is_stringent = FALSE) {
+    output_filename <- file.path(output_dir, paste0(output_name, ".xlsx"))
 
     if (file.exists(output_filename)) {
         file.remove(output_filename)
@@ -38,8 +38,9 @@ save_as_xlsx <- function(
     xlsx::write.xlsx(
         obj_filtered,
         output_filename,
-        col.names = TRUE, row.names = FALSE, append = TRUE
+        col.names = TRUE,
+        row.names = FALSE,
+        append = TRUE
     )
     message("Finished...")
 }
-# TODO remove parameter/argument 'condition_var' -> not used in function
