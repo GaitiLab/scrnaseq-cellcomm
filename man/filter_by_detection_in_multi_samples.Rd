@@ -4,22 +4,16 @@
 \alias{filter_by_detection_in_multi_samples}
 \title{Filter by detection in multiple samples}
 \usage{
-filter_by_detection_in_multi_samples(
-  input_file,
-  min_patients = 2,
-  condition_var = "Condition_dummy",
-  output_dir = "."
-)
+filter_by_detection_in_multi_samples(df, min_patients = 2)
 }
 \arguments{
-\item{input_file}{Path to '401_samples_interactions_mvoted.rds' file}
+\item{df}{dataframe from 'samples_interactions_mvoted.rds'}
 
 \item{min_patients}{Minimum number of patients for an interaction to be kept (default = 2)}
-
-\item{condition_var}{Variabile containing the 'condition' (group/category) of the samples (default = "Condition_dummy")}
-
-\item{output_dir}{output directory for saving output (default = '.')}
+}
+\value{
+dataframe
 }
 \description{
-Filter by detection in multiple samples
+Filtering detected interactions by looking at recurrence in multiple samples/patients. Keeping source-target x interaction pairs that were found in multiple patients (default >2 ) within a condition/group. Performing filtering for the two voting strategies 'lenient' and 'stringent' (based on detection in multiple tools)
 }

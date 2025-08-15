@@ -2,33 +2,18 @@
 % Please edit documentation in R/format_cpdb.R
 \name{format_cpdb}
 \alias{format_cpdb}
-\title{Format cpdb CCI results}
+\title{Format individual output from CellPhoneDB v5}
 \usage{
-format_cpdb(
-  interaction_scores,
-  pval,
-  sign_means,
-  means,
-  ref_db = "data/interactions_db/ref_db.rds",
-  output_dir = ".",
-  sample_id = NULL
-)
+format_cpdb(df, mode = c("pval", "sign_mean", "mean", "interaction_score")[1])
 }
 \arguments{
-\item{interaction_scores}{path to 'statistical_analysis_interaction_scores' txt file}
+\item{df}{dataframe}
 
-\item{pval}{path to 'statistical_analysis_pvalues' txt file}
-
-\item{sign_means}{path to 'statistical_analysis_significant_means' txt file}
-
-\item{means}{path to 'statistical_analysis_means' txt file}
-
-\item{ref_db}{Path to interactions database (default = "data/interactions_db/ref_db.rds")}
-
-\item{output_dir}{output directory for saving output (default = '.')}
-
-\item{sample_id}{sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'cpdb__{sample_id}.csv')}
+\item{mode}{character string indicating what information the dataframe contains.}
+}
+\value{
+dataframe with columns: interacting_pair, source_target and \if{html}{\out{<mode>}}
 }
 \description{
-Format cpdb CCI results
+Format individual output from CellPhoneDB v5
 }

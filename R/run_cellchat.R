@@ -1,104 +1,65 @@
 #' @title Run CellChat
-#' @param gene_expr seurat object with gene expression (rds file)
+#' @description Uses a Seurat object to run CellChat, follows the standard CellChat workflow.
+#' @param gene_expr_path seurat object with gene expression (rds file)
 #' @param annot Column in metadata containing the cell type labels
-#' @param interactions_db (custom) CellChat database
-#' @param output_dir output directory for saving output (default = '.')
+#' @param interactions_db_path path to (custom) CellChat database which should be an '.rds' file.
 #' @param min_cells Minimum number of cells required in each cell group for cell-cell communication (default = 5)
 #' @param n_perm Number of permutations for permutation testing (default = 1000)
+#' @return cellchat object
 #' @export
 run_cellchat <- function(
-    gene_expr,
+    gene_expr_path,
+    interactions_db_path,
     annot,
-    interactions_db,
-    output_dir = ".",
     min_cells = 5,
-    n_perm = 1000) {
+    n_perm = 1000
+) {
     options(future.globals.maxSize = 8000 * 1024**2)
-    #  Sanity checks
-    if (!(file.exists(gene_expr) && endsWith(tolower(gene_expr), ".rds"))) {
-        stop(
-            "Seurat object ('gene_expr') does not exists or is not an RDS object"
-        )
-    }
-    if (
-        !(file.exists(interactions_db) &&
-            endsWith(tolower(interactions_db), ".rds"))
-    ) {
-        stop(
-            "Interactions database ('interactions_db') does not exists or is not an RDS object"
-        )
-    }
-    if (!file.exists(output_dir)) {
-        stop("Output directory does not exist")
-    }
+
     if (min_cells < 5) {
+        # This is a CellChat specific constraint
         stop("Min cells has to be >= 5...")
     }
     message("Load data...")
-    seurat_obj <- readRDS(gene_expr)
+    seurat_obj <- readRDS(gene_expr_path)
 
     message("Extract gene expression and convert to matrix...")
-    mat <- as.matrix(seurat_obj@assays$RNA@data)
-    meta <- seurat_obj@meta.data
-    meta[, annot] <- factor(meta[, annot])
+    gene_expr_mat <- as.matrix(seurat_obj@assays$RNA@data)
+    metadata_df <- seurat_obj@meta.data
+    metadata_df[, annot] <- factor(metadata_df[, annot])
 
-    message("Create CellChat object...")
-    cellchat <- CellChat::createCellChat(
-        object = mat,
-        meta = meta,
+    cc_object <- CellChat::createCellChat(
+        object = gene_expr_mat,
+        meta = metadata_df,
         group.by = annot
     )
-    cellchat <- CellChat::addMeta(cellchat, meta = meta)
-    cellchat <- CellChat::setIdent(cellchat, ident.use = annot) # set 'labels' as default cell identity
+    cc_object <- CellChat::addMeta(cc_object, meta = metadata_df)
+    # set 'labels' as default cell identity
+    cc_object <- CellChat::setIdent(cc_object, ident.use = annot)
+    message("Created CellChat object...")
 
-    message("Load custom database with interactions...")
-    cellchat@DB <- readRDS(interactions_db)
+    cc_object@DB <- readRDS(interactions_db_path)
+    message("Loaded custom database with interactions...")
 
-    message("Preprocessing the expression data...")
-    cellchat <- CellChat::subsetData(cellchat) # This step is necessary even if using the whole database
+    # This step is necessary even if using the whole database
+    cc_object <- CellChat::subsetData(cc_object)
 
-    cellchat <- CellChat::identifyOverExpressedGenes(cellchat)
-    cellchat <- CellChat::identifyOverExpressedInteractions(cellchat)
+    cc_object <- CellChat::identifyOverExpressedGenes(cc_object)
+    cc_object <- CellChat::identifyOverExpressedInteractions(cc_object)
+    message("Preprocessed the expression data...")
 
-    message("Infer cell-cell interactions...")
-    cellchat <- CellChat::computeCommunProb(
-        cellchat,
+    cc_object <- CellChat::computeCommunProb(
+        cc_object,
         nboot = n_perm,
         population.size = TRUE
     )
-    cellchat <- CellChat::filterCommunication(cellchat, min.cells = min_cells)
+
+    cc_object <- CellChat::filterCommunication(cc_object, min.cells = min_cells)
 
     # b. aggregated cell-cell communication network
-    cellchat <- CellChat::aggregateNet(cellchat)
+    cc_object <- CellChat::aggregateNet(cc_object)
+    message("Inferred cell-cell interactions...")
 
-    out_filename <- GaitiLabUtils::get_name(gene_expr)
-    message("Save CellChat object...")
-    saveRDS(
-        cellchat,
-        file = glue::glue("{output_dir}/cellchat__{out_filename}__raw_obj.rds")
-    )
-
-    message("Post-processing...")
-    interactions <- names(cellchat@net$prob[1, 1, ])
-    res <- pbapply::pblapply(interactions, function(interaction) {
-        # Handle probabilities
-        cci <- reshape2::melt(cellchat@net$prob[, , interaction], )
-        colnames(cci) <- c("source", "target", "proba")
-        cci["interaction"] <- interaction
-
-        # Handle pvalues
-        pval_long <- reshape2::melt(cellchat@net$pval[, , interaction])
-        colnames(pval_long) <- c("source", "target", "pval")
-        cci["pval"] <- pval_long$pval
-        return(cci)
-    })
-    message("Concatenate results...")
-    res_concat <- do.call("rbind", res)
-
-    message("Save formatted CellChat results...")
-    saveRDS(
-        res_concat,
-        glue::glue("{output_dir}/cellchat__{out_filename}.rds"),
-    )
     message("Finished...")
+    return(cc_object)
 }

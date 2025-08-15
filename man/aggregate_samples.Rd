@@ -4,18 +4,15 @@
 \alias{aggregate_samples}
 \title{Aggregate samples w/ ranked interactions}
 \usage{
-aggregate_samples(
-  input_file,
-  condition_var = "Condition_dummy",
-  output_dir = "."
-)
+aggregate_samples(df, method = "BH")
 }
 \arguments{
-\item{input_file}{Path to file with interaction results for all samples (401_combine_samples/401_samples_interactions_agg_rank.rds)}
+\item{df}{dataframe with interaction results for all samples (samples_interactions_agg_rank.rds)}
 
-\item{condition_var}{Variabile containing the 'condition' (group/category) of the samples (default = "Condition_dummy")}
-
-\item{output_dir}{output directory for saving output (default = '.')}
+\item{method}{correction method}
+}
+\value{
+dataframe
 }
 \description{
 Combine p-values/scores by condition

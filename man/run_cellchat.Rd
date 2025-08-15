@@ -5,27 +5,27 @@
 \title{Run CellChat}
 \usage{
 run_cellchat(
-  gene_expr,
+  gene_expr_path,
+  interactions_db_path,
   annot,
-  interactions_db,
-  output_dir = ".",
   min_cells = 5,
   n_perm = 1000
 )
 }
 \arguments{
-\item{gene_expr}{seurat object with gene expression (rds file)}
+\item{gene_expr_path}{seurat object with gene expression (rds file)}
+
+\item{interactions_db_path}{path to (custom) CellChat database which should be an '.rds' file.}
 
 \item{annot}{Column in metadata containing the cell type labels}
-
-\item{interactions_db}{(custom) CellChat database}
-
-\item{output_dir}{output directory for saving output (default = '.')}
 
 \item{min_cells}{Minimum number of cells required in each cell group for cell-cell communication (default = 5)}
 
 \item{n_perm}{Number of permutations for permutation testing (default = 1000)}
 }
+\value{
+cellchat object
+}
 \description{
-Run CellChat
+Uses a Seurat object to run CellChat, follows the standard CellChat workflow.
 }

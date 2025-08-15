@@ -33,8 +33,7 @@ Imports:
     tidyverse, 
     survcomp, 
     xlsx,
-    MASS,
-    Matrix
+    duckplyr
 Suggests:
     styler,
     lintr,
@@ -49,7 +48,5 @@ Remotes:
     jinworks/CellChat,
     saezlab/liana,
     GaitiLab/GaitiLabUtils,
-    saezlab/OmnipathR, 
-    cran/Matrix@1.6-5,
-    cran/MASS@7.3-60
+    saezlab/OmnipathR
 URL: https://gaitilab.github.io/scrnaseq-cellcomm/
