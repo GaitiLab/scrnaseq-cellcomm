@@ -4,28 +4,18 @@
 \alias{prepare_data}
 \title{Prepare data for CCI inference}
 \usage{
-prepare_data(
-  input_file,
-  annot,
-  sample_id = NULL,
-  output_dir = ".",
-  min_cells = 5,
-  save_as_10x_format = TRUE
-)
+prepare_data(seurat_obj, annot, min_cells = 5)
 }
 \arguments{
-\item{input_file}{path to seurat object (rds file)}
+\item{seurat_obj}{Seurat object}
 
 \item{annot}{variable in metadata containing the cell annotation}
 
-\item{sample_id}{sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'cpdb__{sample_id}.csv')}
-
-\item{output_dir}{output directory for saving output (default = '.')}
-
 \item{min_cells}{Minimum number of cells required in each cell group for cell-cell communication (default = 5)}
-
-\item{save_as_10x_format}{Logical indicating whether the expression data needs to be saved in the 10x format (default=TRUE)}
+}
+\value{
+Seurat object
 }
 \description{
-filters data and then normalizes the gene expression
+Checks if there are enough cell types with at least \code{min_cells}, then continues with normalization. Groups (cell types) with insufficient no. cells are removed.
 }

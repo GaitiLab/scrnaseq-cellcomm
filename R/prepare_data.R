@@ -1,74 +1,40 @@
 #' @title Prepare data for CCI inference
-#' @description filters data and then normalizes the gene expression
-#' @param input_file path to seurat object (rds file)
-#' @param output_dir output directory for saving output (default = '.')
+#' @description Checks if there are enough cell types with at least `min_cells`, then continues with normalization. Groups (cell types) with insufficient no. cells are removed.
+#' @param seurat_obj Seurat object
 #' @param annot variable in metadata containing the cell annotation
 #' @param min_cells Minimum number of cells required in each cell group for cell-cell communication (default = 5)
-#' @param save_as_10x_format Logical indicating whether the expression data needs to be saved in the 10x format (default=TRUE)
-#' @param sample_id sample id to use for saving formatted CCI results (default = NULL; will determine sample id based on 'input_interactions' for this input_interactions has to be of the format 'cpdb__{sample_id}.csv')
+#' @return Seurat object
 #' @export
 prepare_data <- function(
-    input_file,
+    seurat_obj,
     annot,
-    sample_id = NULL,
-    output_dir = ".",
-    min_cells = 5,
-    save_as_10x_format = TRUE) {
-    #  Sanity checks
-    if (!(file.exists(input_file) && endsWith(tolower(input_file), ".rds"))) {
-        stop("File does not exists or is not an RDS object")
-    }
+    min_cells = 5
+) {
     if (min_cells < 5) {
-        stop("Min cells has to be >= 5...")
+        stop("Min. cells has to be at least 5.")
     }
-
-    message("Loading Seurat object...")
-    seurat_obj <- readRDS(input_file)
-
     if (is.null(annot) && !(annot %in% colnames(seurat_obj@meta.data))) {
         stop("Given annotation not in Seurat object")
     }
 
-    message("Create output directories...")
-    output_seurat <- output_dir
-    output_mtx <- output_dir
-    if (save_as_10x_format) {
-        output_seurat <- glue::glue("{output_dir}/seurat")
-        output_mtx <- glue::glue("{output_dir}/mtx")
-    }
-
-    GaitiLabUtils::create_dir(output_seurat)
-    GaitiLabUtils::create_dir(output_mtx)
-
-    message(glue::glue(
-        "Only keep cell type groups with at least {min_cells} cells"
-    ))
-    seurat_obj <- filtering(
-        seurat_obj,
-        annot = annot,
-        min_cells = min_cells
-    )
-
-    message(glue::glue(
-        "Check number of cell types after filtering (>= 2)..."
-    ))
-    # Determine number of cell types present with at least min_cells
-    n_cell_types <- length(unique(seurat_obj@meta.data[[annot]]))
-
-    if (is.null(sample_id)) {
-        output_name <- stringr::str_split(
-            GaitiLabUtils::get_name(input_file),
-            "__",
-            simplify = TRUE
+    seurat_obj <- seurat_obj |>
+        remove_groups_with_low_ncells(
+            annot = annot,
+            min_cells = min_cells
         )
+    message(paste("Filtered out groups with less than", min_cells, "cells."))
+
+    # Determine number of cell types present with at least min_cells
+    n_groups_with_enough_cells <- length(unique(seurat_obj@meta.data[[annot]]))
+    message(paste(
+        "No. groups (cell types) with enough cells:",
+        n_groups_with_enough_cells
+    ))
+    if (n_groups_with_enough_cells < 2) {
+        stop("Not enough cell types present (at least 2 required)...")
     } else {
-        output_name <- sample_id
-    }
-    if (n_cell_types < 2) {
-        message("Not enough cell types present (at least 2 necessary)...")
-    } else {
-        message("Normalizing data...")
         seurat_obj <- Seurat::NormalizeData(seurat_obj)
+        message("Normalized data.")
 
         # Ensure factor only contain cell types that are included in the object (aka passed the filtering)
         metadata <- seurat_obj@meta.data
@@ -77,25 +43,7 @@ prepare_data <- function(
             levels = unique(metadata[, annot])
         )
         seurat_obj <- Seurat::AddMetaData(seurat_obj, metadata = metadata)
-
-        message("Saving Seurat object...")
-        saveRDS(
-            seurat_obj,
-            glue::glue("{output_seurat}/{output_name}.rds")
-        )
-        if (save_as_10x_format) {
-            message("Convert to mtx format (for Cell2Cell) and save...")
-            mtx_output_dir <- glue::glue("{output_mtx}/{output_name}")
-            if (file.exists(mtx_output_dir)) {
-                file.remove(mtx_output_dir)
-            }
-
-            mat <- seurat_obj[["RNA"]]@data
-            DropletUtils::write10xCounts(
-                mtx_output_dir,
-                mat
-            )
-        }
     }
-    message("Finished...")
+    message("Finished.")
+    return(seurat_obj)
 }

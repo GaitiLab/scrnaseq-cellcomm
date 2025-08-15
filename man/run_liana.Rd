@@ -2,33 +2,33 @@
 % Please edit documentation in R/run_liana.R
 \name{run_liana}
 \alias{run_liana}
-\title{Run CellChat}
+\title{Run LIANA}
 \usage{
 run_liana(
-  gene_expr,
-  interactions_db,
+  gene_expr_path,
+  interactions_db_path,
   annot,
-  output_dir = ".",
   min_cells = 5,
   min_pct = 0.1,
   n_perm = 1000
 )
 }
 \arguments{
-\item{gene_expr}{seurat object with gene expression (rds file)}
+\item{gene_expr_path}{seurat object with gene expression (rds file). This object should contain the RNA assay.}
 
-\item{interactions_db}{(custom) CellChat database (rds file)}
+\item{interactions_db_path}{path to (custom) LIANA database which should be an '.rds' file}
 
 \item{annot}{Column in metadata containing the cell type labels}
 
-\item{output_dir}{output directory for saving output (default = '.')}
-
 \item{min_cells}{Minimum number of cells required in each cell group for cell-cell communication (default = 5)}
 
-\item{min_pct}{Minimum fraction of cells expressing a gene (default = 0.1 = 10\%), max = 1}
+\item{min_pct}{Minimum fraction of cells expressing a gene (default = 0.1 = 10\%), should be a value between 0 and 1}
 
 \item{n_perm}{Number of permutations for permutation testing (default = 1000)}
 }
+\value{
+liana_obj returns output of \code{liana::liana_wrap}
+}
 \description{
-Run CellChat
+Uses a Seurat object to run LIANA, follows the standard LIANA workflow.
 }
