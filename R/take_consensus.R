@@ -15,6 +15,10 @@ take_consensus <- function(
             is_detected_signif = pval < alpha,
         ) |>
         # Within a sample_id - source-target combination, is the interaction detected by multiple methods
+<<<<<<< HEAD
+=======
+        # TODO remove group_by() later in favor of using .by argument in summarise
+>>>>>>> 56557e8e7e4633569c0cf9e182e7c14d86197058
         dplyr::group_by(sample_id, source_target, complex_interaction) |>
         dplyr::summarise(
             is_detected_signif_in_n_methods = sum(is_detected_signif),
@@ -25,9 +29,17 @@ take_consensus <- function(
                     method[is_detected_signif],
                     collapse = ", "
                 )
+<<<<<<< HEAD
             )
         ) |>
         dplyr::ungroup() |>
+=======
+            ),
+            .by = c(sample_id, source_target, complex_interaction)
+        ) |>
+        # TODO remove later as will be redundant if .by is used
+        # dplyr::ungroup() |>
+>>>>>>> 56557e8e7e4633569c0cf9e182e7c14d86197058
         # Still contains the interactions that have less 3 methods (no signif filter)
         dplyr::mutate(
             lenient_voting = (is_detected_signif_in_n_methods >= 3) &

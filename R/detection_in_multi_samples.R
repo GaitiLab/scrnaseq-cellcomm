@@ -6,12 +6,22 @@ add_detection_flags <- function(df) {
     return(
         df |>
             duckplyr::as_duckdb_tibble() |>
+<<<<<<< HEAD
             dplyr::group_by(
                 type_of_vote,
                 condition,
                 source_target,
                 complex_interaction
             ) |>
+=======
+            # TODO remove later, in favor of using .by =
+            # dplyr::group_by(
+            #     type_of_vote,
+            #     condition,
+            #     source_target,
+            #     complex_interaction
+            # ) |>
+>>>>>>> 56557e8e7e4633569c0cf9e182e7c14d86197058
             dplyr::summarise(
                 # Is an interaction x source-target pair identified in multiple sample_ids from the same patient_id?
                 detected_in_n_sample_ids = dplyr::n_distinct(sample_id),
@@ -26,7 +36,18 @@ add_detection_flags <- function(df) {
                     sort(unique(patient_id)),
                     collapse = ", "
                 ),
+<<<<<<< HEAD
             ) |>
+=======
+                .by = c(
+                    type_of_vote,
+                    condition,
+                    source_target,
+                    complex_interaction
+                )
+            ) |>
+            # TODO remove later, will be redundant if .by argument is used
+>>>>>>> 56557e8e7e4633569c0cf9e182e7c14d86197058
             dplyr::ungroup()
     )
 }
