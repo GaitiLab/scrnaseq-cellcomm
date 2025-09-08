@@ -5,8 +5,7 @@
 #' @export
 take_consensus <- function(
     interactions_df,
-    alpha = 0.05
-) {
+    alpha = 0.05) {
     # contains all interactions, may contain NAs if interactions was missing
     scores_df <- interactions_df |> to_wide_cci_df()
 

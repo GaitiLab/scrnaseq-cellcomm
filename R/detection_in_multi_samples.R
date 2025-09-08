@@ -36,10 +36,7 @@ add_detection_flags <- function(df) {
 #' @param min_patients Minimum number of patients for an interaction to be kept (default = 2)
 #' @return dataframe
 #' @export
-filter_by_detection_in_multi_samples <- function(
-    df,
-    min_patients = 2
-) {
+filter_by_detection_in_multi_samples <- function(df, min_patients = 2) {
     cols_oi <- c(
         "condition",
         "patient_id",
@@ -103,7 +100,7 @@ filter_by_detection_in_multi_samples <- function(
     if (identical(df$sample_id, df$patient_id)) {
         # If you don't have a nested structure, i.e. patients having multiple samples, then the sample_id and patient_id columns are the same, therefore remove the sample_id related columns.
         df_wide_filtered_for_multi_patient_detection <- df_wide_filtered_for_multi_patient_detection |>
-            dplyr::select(-stringr::ends_with("sample_ids"))
+            dplyr::select(-dplyr::ends_with("sample_ids"))
         message(
             "The columns 'sample_id' and 'patient_id' are the same, removed columns related to sample_ids."
         )
