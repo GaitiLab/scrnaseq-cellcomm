@@ -3,10 +3,9 @@
 #' @param mode 'pval' or 'interaction_score' dependent on input
 #' @return dataframe with columns: interaction, source_target, pval
 #' @export
-format_cell2cell <- function(
+FormatCell2Cell <- function(
     c2c_df,
-    mode = c("pval", "interaction_score")[1]
-) {
+    mode = c("pval", "interaction_score")[1]) {
     match.arg(mode, c("pval", "interaction_score"))
 
     return(
@@ -41,16 +40,15 @@ format_cell2cell <- function(
 #' @param sample_id character string for sample_id to add to dataframe (if non given set to NA)
 #' @return dataframe with columns: source_target, pval, interaction_score, complex_interaction, method, sample_id
 #' @export
-format_cell2cell_wrapper <- function(
+FormatCell2CellWrapper <- function(
     input_interactions_pval,
     input_interactions_scores,
     ref_db,
-    sample_id = NA
-) {
+    sample_id = NA) {
     df <- purrr::map2(
         list(input_interactions_pval, input_interactions_scores),
         c("pval", "interaction_score"),
-        format_cell2cell
+        FormatCell2Cell
     ) |>
         purrr::reduce(full_join, by = c("source_target", "interaction")) |>
         dplyr::left_join(ref_db, by = "interaction") |>

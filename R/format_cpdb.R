@@ -3,10 +3,9 @@
 #' @param mode character string indicating what information the dataframe contains.
 #' @return dataframe with columns: interacting_pair, source_target and <mode>
 #' @export
-format_cpdb <- function(
+FormatCPDB <- function(
     df,
-    mode = c("pval", "sign_mean", "mean", "interaction_score")[1]
-) {
+    mode = c("pval", "sign_mean", "mean", "interaction_score")[1]) {
     match.arg(mode, c("pval", "sign_mean", "mean", "interaction_score"))
     source_target_pairs <- colnames(df)[stringr::str_detect(
         colnames(df),
@@ -43,8 +42,8 @@ format_cpdb <- function(
 #' @param sample_id character string for sample_id to add to dataframe (if non given set to NA)
 #' @return dataframe with columns: source_target, interaction_score, pval, rank, sign_mean, mean, method, sample_id, complex_interaction
 #' @export
-format_cpdb_wrapper <- function(cpdb_dfs, ref_db, sample_id = NA) {
-    df <- purrr::map2(cpdb_dfs, names(cpdb_dfs), format_cpdb) |>
+FormatCPDBWrapper <- function(cpdb_dfs, ref_db, sample_id = NA) {
+    df <- purrr::map2(cpdb_dfs, names(cpdb_dfs), FormatCPDB) |>
         purrr::reduce(
             left_join,
             by = c("interacting_pair", "source_target")

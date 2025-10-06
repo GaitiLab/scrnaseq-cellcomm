@@ -4,11 +4,10 @@
 #' @param ref_db dataframe with reference database of interactions
 #' @return dataframe
 #' @export
-format_liana <- function(
+FormatLIANA <- function(
     cci_obj,
     ref_db,
-    sample_id = NA
-) {
+    sample_id = NA) {
     df <- cci_obj |>
         liana::liana_aggregate() |>
         duckplyr::as_duckdb_tibble() |>

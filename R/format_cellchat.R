@@ -4,15 +4,14 @@
 #' @param cci_ls list with 2D arrays representing the results for the interactions in the (custom) CellChat database
 #' @param mode character string which CellChat output slot is formatted, i.e. 'interaction_score' or 'pval'
 #' @return dataframe with 4 columns, i.e. source, target, interaction_score, interaction
-reshape_and_add_interaction_name <- function(
+ReshapeAndAddInteractionName <- function(
     interaction_name,
     cci_ls,
-    mode = c("pval", "interaction_score")[1]
-) {
+    mode = c("pval", "interaction_score")[1]) {
     match.arg(mode, c("pval", "interaction_score"))
 
     return(
-        cci_ls[,, interaction_name] |>
+        cci_ls[, , interaction_name] |>
             as.data.frame() |>
             tibble::rownames_to_column("source") |>
             tidyr::pivot_longer(
@@ -33,12 +32,11 @@ reshape_and_add_interaction_name <- function(
 #' @param n_cores integer indicating the number of cores to use
 #' @return dataframe with columns: source_target, interaction_score, pval, complex_interaction, method, sample_id
 #' @export
-format_cellchat <- function(
+FormatCellChat <- function(
     cc_obj,
     ref_db,
     sample_id = NA,
-    n_cores = 1
-) {
+    n_cores = 1) {
     cluster <- parallel::makeCluster(n_cores)
 
     # Needed for reshaping data, dependent on the CCI database used for running CellChat
@@ -51,7 +49,7 @@ format_cellchat <- function(
         \(cci_ls, mode) {
             pbapply::pblapply(
                 included_interactions,
-                reshape_and_add_interaction_name,
+                ReshapeAndAddInteractionName,
                 cci_ls = cci_ls,
                 mode = mode,
                 cl = cluster

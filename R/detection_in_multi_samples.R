@@ -2,6 +2,7 @@
 #' @description adds columns indicating how many patients/samples detected a source-target x interaction combination, within a voting strategy and condition/group. Also adds columns with the exact patients/samples where the combination was found.
 #' @param df dataframe
 #' @return df dataframe
+#' @export
 add_detection_flags <- function(df) {
     return(
         df |>
@@ -36,7 +37,7 @@ add_detection_flags <- function(df) {
 #' @param min_patients Minimum number of patients for an interaction to be kept (default = 2)
 #' @return dataframe
 #' @export
-filter_by_detection_in_multi_samples <- function(df, min_patients = 2) {
+FilterByDetectionInMultiSamples <- function(df, min_patients = 2) {
     cols_oi <- c(
         "condition",
         "patient_id",
@@ -47,7 +48,6 @@ filter_by_detection_in_multi_samples <- function(df, min_patients = 2) {
 
     df_long <- df |>
         dplyr::select(dplyr::all_of(cols_oi), dplyr::ends_with("_voting")) |>
-        dtplyr::lazy_dt() |>
         # Conversion for easy data wrangling
         tidyr::pivot_longer(
             cols = dplyr::ends_with("_voting"),

@@ -2,7 +2,7 @@
 #' @title Format rankings of LIANA's internal methods
 #' @param df dataframe
 #' @return dataframe with columns: uid, method and rank (larger value = 'lower importance/priority')
-format_internal_methods_liana <- function(df) {
+FormatInternalMethodsLIANA <- function(df) {
     liana_internal_methods <- c(
         "connectome",
         "logfc",
@@ -14,7 +14,7 @@ format_internal_methods_liana <- function(df) {
 
     return(
         df |>
-            add_uid() |>
+            AddUniqueIdentifier() |>
             dplyr::rename_with(
                 .cols = dplyr::all_of(liana_internal_methods_rank_cols),
                 ~ paste(
@@ -39,14 +39,14 @@ format_internal_methods_liana <- function(df) {
 #' @description adds uid + ranks interactions and returns a dataframe with the required columns for downstream analyses
 #' @param df dataframe with interactions
 #' @return dataframe
-extract_df_with_ranks <- function(df, n_perm = 1e3) {
+ExtractDFWithRanks <- function(df, n_perm = 1e3) {
     return(
         df |>
-            add_uid() |>
+            AddUniqueIdentifier() |>
             # Only affects CellPhoneDB
             dplyr::select(-dplyr::any_of("rank")) |>
             # As ranks are needed, add a custom rank based on -log10(pval) x interaction_score
-            add_cci_rank(n_perm) |>
+            AddCCIRank(n_perm) |>
             dplyr::select(
                 uid,
                 method,
@@ -63,10 +63,9 @@ extract_df_with_ranks <- function(df, n_perm = 1e3) {
 #' @param n_perm number of permutations to create pval_dummy variable for computing -log10(pval_dummy) * score, only applicable to CellChat, Cell2Cell and CellPhoneDB
 #' @return dataframe
 #' @export
-aggregate_cci_ranks <- function(
+AggregateCCIRanks <- function(
     list_of_cci_objects,
-    n_perm = 1e3
-) {
+    n_perm = 1e3) {
     # ---- Constants ----
     methods_not_liana <- setdiff(
         names(list_of_cci_objects),
@@ -85,18 +84,18 @@ aggregate_cci_ranks <- function(
     interactions_df <- list_of_cci_objects |>
         purrr::map_dfr(~ dplyr::select(.x, dplyr::all_of(cols_common))) |>
         duckplyr::as_duckdb_tibble() |>
-        to_wide_cci_df()
+        ToWideCCIDF()
 
     # ---- Defining/extracting ranks for each method ----
 
     # (1) Handle ranking of LIANA's internal methods
     rankings_internal_liana_methods_df <- list_of_cci_objects[["LIANA"]] |>
-        format_internal_methods_liana()
+        FormatInternalMethodsLIANA()
     message("Extracted rankings of LIANA's internal CCI methods.")
     # (2) Handle CCI methods that don't provide a ranking
 
     rankings_methods_not_liana_df <- list_of_cci_objects[methods_not_liana] |>
-        purrr::map_dfr(extract_df_with_ranks, n_perm = n_perm)
+        purrr::map_dfr(ExtractDFWithRanks, n_perm = n_perm)
     message("Added ranking for all other CCI methods.")
     # each dataframe should contain the following columns: uid, method and rank (larger value = 'lower importance/priority')
 
