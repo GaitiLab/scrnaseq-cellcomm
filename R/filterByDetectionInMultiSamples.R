@@ -1,9 +1,13 @@
 #' @title Add detection flags
+#'
 #' @description adds columns indicating how many patients/samples detected a source-target x interaction combination, within a voting strategy and condition/group. Also adds columns with the exact patients/samples where the combination was found.
+#'
 #' @param df dataframe
+#'
 #' @return df dataframe
+#'
 #' @export
-add_detection_flags <- function(df) {
+AddDetectionFlags <- function(df) {
     return(
         df |>
             duckplyr::as_duckdb_tibble() |>
@@ -32,10 +36,14 @@ add_detection_flags <- function(df) {
     )
 }
 #' @title Filter by detection in multiple samples
+#'
 #' @description Filtering detected interactions by looking at recurrence in multiple samples/patients. Keeping source-target x interaction pairs that were found in multiple patients (default >2 ) within a condition/group. Performing filtering for the two voting strategies 'lenient' and 'stringent' (based on detection in multiple tools)
+#'
 #' @param df dataframe from 'samples_interactions_mvoted.rds'
 #' @param min_patients Minimum number of patients for an interaction to be kept (default = 2)
+#'
 #' @return dataframe
+#'
 #' @export
 FilterByDetectionInMultiSamples <- function(df, min_patients = 2) {
     cols_oi <- c(
@@ -66,7 +74,7 @@ FilterByDetectionInMultiSamples <- function(df, min_patients = 2) {
         )
 
     df_long_w_detection_flags <- df_long |>
-        add_detection_flags() |>
+        AddDetectionFlags() |>
         dplyr::mutate(
             detected_in_enough_patients = detected_in_n_patient_ids >=
                 min_patients

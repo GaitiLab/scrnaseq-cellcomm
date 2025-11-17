@@ -1,8 +1,12 @@
 #' @title Add CCI rank
+#'
 #' @description Add cci rank based on p-value x interaction score. Needed for CCI methods that do not provide a rank, i.e. CellChat, CellPhoneDB and cell2cell.
+#'
 #' @param df dataframe with at least the columns pval and interaction_score
 #' @param n_perm no. permutations to define smallest possible pvalue
+#'
 #' @return df with columns pval_corr, log10_score and rank
+#' 
 #' @export
 AddCCIRank <- function(df, n_perm = 1e3) {
     return(

@@ -1,8 +1,12 @@
 #' @title Aggregate samples w/ ranked interactions
+#'
 #' @description Combine p-values/scores by condition
+#'
 #' @param df dataframe with interaction results for all samples (samples_interactions_agg_rank.rds)
 #' @param method correction method
+#'
 #' @return dataframe
+#'
 #' @export
 AggregateSamples <- function(df, method = "BH") {
     match.arg(

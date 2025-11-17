@@ -1,7 +1,10 @@
 #' @title Add unique identifier
+#'
 #' @param df dataframe
 #' @param cols_to_merge columns that should be used to create the uid
+#'
 #' @return df
+#'
 #' @export
 AddUniqueIdentifier <- function(
     df,

@@ -1,13 +1,16 @@
-#' @title Combine samples
-#' @description hard-combine results per sample.
-#' @param df dataframe
-#' @param metadata dataframe with metadata
+#' @title Format metadata
+#'
+#' @description format metadata.
+#'
+#' @param meta_df dataframe with metadata
 #' @param patient_var patient variable name in metadata
 #' @param sample_var sample variable name in metadata (default = "Sample")
 #' @param condition_var condition variable name in metadata (default = "Condition_dummy")
+#'
+#' @return dataframe with sample_id, condition, patient_id
+#'
 #' @export
-AddMetaData <- function(
-    df,
+FormatMetadata <- function(
     meta_df,
     patient_var = "sample_id",
     condition_var = "condition_dummy",
@@ -40,5 +43,6 @@ AddMetaData <- function(
         meta_df <- meta_df |>
             dplyr::rename(dplyr::all_of(lookup))
     }
-    return(df)
+    # df |> dplyr::left_join(meta_df)
+    return(meta_df)
 }
