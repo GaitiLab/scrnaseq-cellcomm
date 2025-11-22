@@ -24,8 +24,8 @@ RunLIANA <- function(
         nperms = n_perm
     )
     # ---- Perform sanity checks ----
-    is_valid_filepath(gene_expr_path)
-    is_valid_filepath(interactions_db_path)
+    # is_valid_filepath(gene_expr_path)
+    # is_valid_filepath(interactions_db_path)
     # Minimum of 5 cells enforced/required by LIANA
     if (min_cells < 5) {
         stop("Min cells has to be >= 5...")
@@ -61,14 +61,6 @@ RunLIANA <- function(
         min_cells = min_cells,
         expr_prop = min_pct
     )
-    # message("Save LIANA results...")
-    # TODO move out of function into Rscript/pipeline
-    # out_filename <- GaitiLabUtils::get_name(gene_expr_path)
-    # saveRDS(
-    #     liana_obj,
-    #     file = glue::glue("{output_dir}/liana__{out_filename}.rds")
-    # )
-
     message("Finished...")
     return(liana_obj)
 }
